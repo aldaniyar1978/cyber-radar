@@ -2,97 +2,423 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Game Security Radar</title>
+  <title>Game Security Radar – Threats & Tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #050816; color: #e5e7eb; }
-    header { padding: 20px; background: #0b1120; border-bottom: 1px solid #1f2937; }
-    h1 { margin: 0; font-size: 24px; }
-    main { max-width: 900px; margin: 20px auto; padding: 0 16px; }
-    .subtitle { color: #9ca3af; margin-top: 4px; }
-    .section-title { margin-top: 32px; font-size: 18px; }
-    .card { border: 1px solid #1f2937; border-radius: 8px; padding: 16px; margin-top: 12px; background: #020617; }
-    footer { margin-top: 40px; padding: 16px; text-align: center; color: #6b7280; font-size: 12px; border-top: 1px solid #1f2937; }
+    :root {
+      --bg: #020617;
+      --bg-alt: #020617;
+      --card: #0b1120;
+      --border: #1e293b;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.1);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+    }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(15,23,42,0.7));
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-soft);
+      background: radial-gradient(circle at 30% 0, #38bdf8 0, #0f172a 45%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #e0f2fe;
+      font-weight: 600;
+    }
+    .brand-text-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .nav-links a {
+      margin-left: 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 20px;
+    }
+    @media (max-width: 800px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    .hero {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(15,23,42,0.75));
+      box-shadow: 0 20px 40px rgba(15,23,42,0.7);
+    }
+    .hero-title {
+      font-size: 26px;
+      margin: 0 0 8px;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0 0 14px;
+    }
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+      font-size: 11px;
+    }
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.7);
+      color: var(--text-muted);
+    }
+    .tag-accent {
+      border-color: var(--accent-soft);
+      background: var(--accent-soft);
+      color: #e0f2fe;
+    }
+    .status-line {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 0 0 8px;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      font-size: 11px;
+      margin-right: 8px;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      margin-right: 6px;
+      background: #22c55e;
+    }
+    .status-dot-offline { background: #f97373; }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: transparent;
+      color: var(--text-main);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      border-color: var(--accent);
+      background: linear-gradient(to right, #0ea5e9, #22c55e);
+      color: #0f172a;
+      font-weight: 500;
+    }
+    .btn span.icon {
+      font-size: 14px;
+    }
+
+    .section {
+      margin-top: 18px;
+    }
+    .section-title {
+      font-size: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-title span.label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+    .section-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 12px 14px;
+    }
+    .card-title {
+      font-size: 14px;
+      margin: 0 0 4px;
+    }
+    .card-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .card-text {
+      font-size: 12px;
+      color: var(--text-main);
+      margin: 0;
+    }
+    .pill-row {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      color: var(--text-muted);
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sidebar-card {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.9);
+      padding: 12px 14px;
+    }
+    .sidebar-title {
+      font-size: 14px;
+      margin: 0 0 6px;
+    }
+    .sidebar-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 0 0 10px;
+    }
+    .tool-link {
+      display: block;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 4px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 10px 16px 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      background: #020617;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Game Security Radar</h1>
-    <div class="subtitle">Curated cybersecurity and game threat intelligence — in one place.</div>
+    <div class="nav">
+      <div class="brand">
+        <div class="brand-logo">R</div>
+        <div>
+          <div class="brand-text-title">Game Security Radar</div>
+          <div class="brand-text-sub">Signals on game threats, cheats & account security</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="news.html">News feed</a>
+        <a href="tools.html">Tools</a>
+        <a href="https://github.com/YOUR_USERNAME/YOUR_REPO" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
   </header>
+
   <main>
+    <!-- Левая колонка -->
     <section>
-      <h2 class="section-title">Latest status</h2>
-      <div class="card" id="status-card">
-        Checking backend health...
-      </div>
-    </section>
-    
-<section>
-  <h2 class="section-title">Latest news</h2>
-    <p><a href="news.html">View all news →</a></p>
-  <div class="card">
-       <article class="news-item">
-      <h2 class="news-title">
-        Gaming cheats increasingly used to deliver malware
-      </h2>
-      <p class="news-summary">
-        Security researchers report a rise in cheat loaders and cracked game tools that secretly install infostealers and remote access trojans on gamers' PCs.
-      </p>
-      <ul class="news-points">
-        <li><strong>What happened:</strong> Attackers bundle infostealers and RATs with popular cheat tools and cracked game utilities.</li>
-        <li><strong>Attack method:</strong> Users download cheats from untrusted sites; installers drop both the cheat and hidden malware.</li>
-        <li><strong>Who is affected:</strong> PC gamers seeking free cheats or cracks for popular online titles.</li>
-        <li><strong>Impact:</strong> Theft of game accounts, payment data, browser cookies, and possible full system compromise.</li>
-        <li><strong>Mitigation:</strong> Avoid cheats and cracks, use reputable anti-malware, and enable multi-factor authentication on game platforms.</li>
-      </ul>
-      <p class="news-meta">
-        Source: <a href="https://www.pcmatic.com/blog/gaming-cheats-are-the-new-cyber-threat-insights-from-a-cybersecurity-expert/" target="_blank" rel="noopener noreferrer">
-          PC Matic – Gaming cheats as a new cyber threat
-        </a>
-      </p>
-      <p class="news-tags">
-        Tags: gaming, cheats, malware, infostealer, game-threats
-      </p>
-    </article>
-  </div>
-</section>
+      <article class="hero">
+        <h1 class="hero-title">Tracking how cheats, infostealers and weak security collide in gaming.</h1>
+        <p class="hero-sub">
+          Short, high-signal notes on account takeovers, cheat ecosystems and how game platforms respond.
+          Built for players, analysts and security teams.
+        </p>
 
-    <section>
-      <h2 class="section-title">About</h2>
-      <div class="card">
-        Game Security Radar tracks breaches, vulnerabilities, malware campaigns, and cheating-related threats in the gaming world. 
-        Short briefs, trusted sources, and practical takeaways for security-minded gamers and professionals.
-        <p>
-  <a href="tools.html">See recommended security tools →</a>
-</p>
-      </div>
+        <div class="hero-tags">
+          <span class="tag tag-accent">Game account security</span>
+          <span class="tag">Cheat ecosystems</span>
+          <span class="tag">Infostealers</span>
+          <span class="tag">Policy & enforcement</span>
+        </div>
+
+        <p class="status-line">
+          <span class="status-pill">
+            <span class="status-dot"></span>
+            Backend API: online
+          </span>
+          Last update: <span id="last-updated-text">2026‑02‑09</span>
+        </p>
+
+        <div class="hero-buttons">
+          <a href="news.html" class="btn btn-primary">
+            <span class="icon">⚡</span> Latest incident notes
+          </a>
+          <a href="tools.html" class="btn">
+            <span class="icon">🛡</span> Recommended security tools
+          </a>
+        </div>
+      </article>
+
+      <section class="section">
+        <div class="section-title">
+          <span>Latest notes</span>
+          <span class="label">live feed</span>
+        </div>
+        <p class="section-sub">
+          A rolling log of key events. Short, linkable items you can scan in under a minute.
+        </p>
+
+        <div class="card-list" id="latest-news">
+          <!-- сюда будем автоматически подставлять 3 последние новости -->
+          <div class="card">
+            <h3 class="card-title">Example: Steam account phishing via fake support tickets</h3>
+            <div class="card-meta">2026‑02‑09 · Source: community reports</div>
+            <p class="card-text">
+              Attackers push victims to “verify” purchases on a fake support page, stealing Steam logins and 2FA codes.
+            </p>
+            <div class="pill-row">
+              <span class="pill">Account takeover</span>
+              <span class="pill">Social engineering</span>
+            </div>
+          </div>
+        </div>
+      </section>
     </section>
 
-    <section>
-      <h2 class="section-title">Newsletter (coming soon)</h2>
-      <div class="card">
-        Soon you will be able to subscribe to a weekly briefing with the most important stories in gaming and cybersecurity.
-      </div>
-    </section>
+    <!-- Правая колонка -->
+    <aside class="sidebar">
+      <section class="sidebar-card">
+        <h2 class="sidebar-title">Why the name “Game Security Radar”?</h2>
+        <p class="sidebar-text">
+          The site is meant to work like a radar screen: short pings whenever something in the game‑security space moves.
+          Not a newswire, but a focused sensor for threats that matter.
+        </p>
+        <p class="sidebar-text">
+          Over time this may evolve into a deeper research project or newsletter, but the core idea stays the same:
+          keep important signals visible for people who care about games and security.
+        </p>
+      </section>
+
+      <section class="sidebar-card">
+        <h2 class="sidebar-title">Security tools we actually use</h2>
+        <p class="sidebar-text">
+          We track a small set of VPNs, password managers and anti‑malware tools that make sense for gamers and analysts.
+          Some links may be affiliate links; they never change how we describe a product.
+        </p>
+        <a href="tools.html" class="tool-link">Go to tools &raquo;</a>
+      </section>
+
+      <section class="sidebar-card">
+        <h2 class="sidebar-title">What’s next</h2>
+        <p class="sidebar-text">
+          The next steps: automate news ingestion, add simple search over incidents, and publish short explainers
+          on major cheat and infostealer families.
+        </p>
+        <a href="news.html" class="tool-link">Browse all notes &raquo;</a>
+      </section>
+    </aside>
   </main>
+
   <footer>
-    &copy; 2026 Game Security Radar
+    &copy; 2026 Game Security Radar · Static site on Netlify
   </footer>
 
   <script>
-    const API_BASE = 'https://game-security-radar.onrender.com/api';  // позже заменим
-
-    fetch(API_BASE + '/health')
-      .then(res => res.json())
+    // Простой хук под автоматизацию: если есть lastUpdate в JSON, можно подставлять сюда
+    fetch('news.json')
+      .then(r => r.json())
       .then(data => {
-        document.getElementById('status-card').textContent =
-          'Backend status: ' + data.status + ' (' + data.service + ')';
+        const items = (data.items || []).slice(0, 3);
+        const container = document.getElementById('latest-news');
+        if (!items.length) return;
+        container.innerHTML = '';
+        items.forEach(item => {
+          const card = document.createElement('article');
+          card.className = 'card';
+          card.innerHTML = `
+            <h3 class="card-title">${item.title}</h3>
+            <div class="card-meta">${item.date} · ${item.source || ''}</div>
+            <p class="card-text">${item.summary}</p>
+            <div class="pill-row">
+              ${(item.tags || []).map(t => `<span class="pill">${t}</span>`).join('')}
+            </div>
+          `;
+          container.appendChild(card);
+        });
+        if (data.lastUpdated) {
+          const el = document.getElementById('last-updated-text');
+          if (el) el.textContent = data.lastUpdated;
+        }
       })
-      .catch(() => {
-        document.getElementById('status-card').textContent =
-          'Backend status: unavailable (will be connected later).';
-      });
+      .catch(() => {});
   </script>
 </body>
 </html>
