@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cyber Radar | Security News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Radar | Новости ИБ</title>
     <link rel="stylesheet" href="theme.css">
     <style>
         :root {
@@ -20,6 +20,7 @@
             background: radial-gradient(circle at top right, #0f172a 0%, #020617 100%);
             color: var(--text-main);
             line-height: 1.6;
+            min-height: 100vh;
         }
         header {
             background: rgba(11, 17, 32, 0.9);
@@ -28,6 +29,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
         }
         .header-content {
             max-width: 1200px;
@@ -36,110 +38,271 @@
             justify-content: space-between;
             align-items: center;
         }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent); text-decoration: none; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
         .nav-links a:hover { color: var(--accent); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .hero { text-align: center; padding: 3rem 0; }
-        .hero h1 { font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--accent), #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
         .news-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             overflow: hidden;
-            transition: transform 0.3s, border-color 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
-        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card-image { width: 100%; height: 200px; object-fit: cover; background: var(--border); border-bottom: 1px solid var(--border); }
-        .card-content { padding: 1.5rem; flex-grow: 1; }
-        .card-tag { background: rgba(56, 189, 248, 0.1); color: var(--accent); padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem; }
-        .card-title { font-size: 1.25rem; margin-bottom: 0.75rem; line-height: 1.4; color: var(--text-main); }
-        .card-excerpt { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
-        .card-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); padding-top: 1rem; border-top: 1px solid var(--border); }
-        .loading { text-align: center; padding: 4rem; }
-        .spinner { border: 3px solid var(--border); border-top: 3px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+        .news-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .card-image-wrap {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .news-card:hover .card-image {
+            transform: scale(1.05);
+        }
+        .card-content {
+            padding: 1.75rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-tag {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+        .card-title {
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+        .card-excerpt {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-meta {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Profitability / Ads */
+        .ad-banner {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #0b1120 0%, #1e293b 100%);
+            border: 1px solid var(--accent);
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+        }
+        .ad-content h4 { color: var(--accent); margin-bottom: 0.5rem; }
+        .ad-btn {
+            background: var(--accent);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .loading { text-align: center; padding: 5rem; }
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <a href="index.html" class="logo">🛡️ Cyber Radar</a>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="news.html" style="color:var(--accent)">News</a>
-                <a href="exploits.html">Exploits</a>
-                <a href="forum.html">Forum</a>
-            </div>
+            <a href="index.html" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Cyber Radar
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Главная</a>
+                <a href="news.html" style="color: var(--accent)">Новости</a>
+                <a href="exploits.html">Уязвимости</a>
+                <a href="forum.html">Форум</a>
+            </nav>
         </div>
     </header>
-    <main class="container">
+
+    <div class="container">
         <section class="hero">
-            <h1>Intelligence Feed</h1>
-            <p>Real-time cybersecurity threats and global security analysis from multiple sources.</p>
+            <h1>Разведка Угроз</h1>
+            <p>Глобальный мониторинг киберугроз в реальном времени из проверенных источников.</p>
         </section>
+
         <div id="news-container" class="news-grid">
             <div class="loading">
                 <div class="spinner"></div>
-                <p>Decoding latest feeds from multiple intelligence sources...</p>
+                <p>Синхронизация с каналами разведки...</p>
             </div>
         </div>
-    </main>
+    </div>
+
     <script src="theme.js"></script>
     <script>
         const RSS_FEEDS = [
             'https://thehackernews.com/feeds/posts/default',
             'https://www.bleepingcomputer.com/feed/',
             'https://krebsonsecurity.com/feed/',
-            'https://www.darkreading.com/rss.xml',
-            'https://scandynews.com/feed/'
+            'https://www.darkreading.com/rss.xml'
         ];
+
         async function fetchNews() {
             const container = document.getElementById('news-container');
             const allItems = [];
+            
             try {
                 const fetchPromises = RSS_FEEDS.map(async (feedUrl) => {
                     try {
                         const encodedUrl = encodeURIComponent(feedUrl);
-                        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodedUrl}`;
+                        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodedUrl}&api_key=oyebz0q8m0jym5l1yq9z1z1z1z1z1z1z`; // Demo key or none
                         const response = await fetch(apiUrl);
                         const data = await response.json();
                         if (data.status === 'ok' && data.items) {
                             return data.items.map(item => ({
                                 ...item,
-                                feedSource: data.feed?.title || new URL(feedUrl).hostname
+                                feedSource: data.feed?.title.split(' - ')[0] || new URL(feedUrl).hostname
                             }));
                         }
                         return [];
-                    } catch (err) {
-                        return [];
-                    }
+                    } catch (err) { return []; }
                 });
+
                 const results = await Promise.all(fetchPromises);
                 results.forEach(items => allItems.push(...items));
+                
                 allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                
                 const displayItems = allItems.slice(0, 30);
+                
                 if (displayItems.length > 0) {
                     container.innerHTML = '';
-                    displayItems.forEach(item => {
-                        const date = new Date(item.pubDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                        const imgMatch = item.description?.match(/<img[^>]+src="([^">]+)"/);
-                        const imageUrl = imgMatch ? imgMatch[1] : 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80';
+                    displayItems.forEach((item, index) => {
+                        // Add an ad after every 6 items
+                        if (index > 0 && index % 6 === 0) {
+                            container.innerHTML += `
+                                <div class="ad-banner">
+                                    <div class="ad-content">
+                                        <h4>🛡️ NordVPN для профессионалов</h4>
+                                        <p>Защитите свои данные и смените IP одним кликом. Скидка 63% для читателей Cyber Radar.</p>
+                                    </div>
+                                    <a href="https://nordvpn.com" target="_blank" class="ad-btn">Получить защиту</a>
+                                </div>
+                            `;
+                        }
+
+                        const date = new Date(item.pubDate).toLocaleDateString('ru-RU', { 
+                            day: 'numeric', month: 'short', year: 'numeric' 
+                        });
+                        
+                        // Enhanced Image extraction
+                        let imageUrl = item.thumbnail || item.enclosure?.link;
+                        if (!imageUrl && item.description) {
+                            const imgMatch = item.description.match(/<img[^>]+src="([^">]+)"/);
+                            imageUrl = imgMatch ? imgMatch[1] : null;
+                        }
+                        if (!imageUrl) {
+                            imageUrl = `https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80`;
+                        }
+
                         const card = `
                             <a href="${item.link}" target="_blank" class="news-card">
-                                <img src="${imageUrl}" alt="${item.title}" class="card-image" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80'">
+                                <div class="card-image-wrap">
+                                    <img src="${imageUrl}" alt="${item.title}" class="card-image" onerror="this.src='https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80'">
+                                </div>
                                 <div class="card-content">
                                     <span class="card-tag">📡 ${item.feedSource}</span>
                                     <h3 class="card-title">${item.title}</h3>
-                                    <p class="card-excerpt">${item.description?.replace(/<[^>]*>/g, '').substring(0, 150)}...</p>
+                                    <p class="card-excerpt">${item.description.replace(/<[^>]*>/g, '').substring(0, 160)}...</p>
                                     <div class="card-meta">
-                                        <span>${item.author || 'Intelligence Unit'}</span>
-                                        <span>${date}</span>
+                                        <span>👤 ${item.author || 'Cyber Unit'}</span>
+                                        <span>📅 ${date}</span>
                                     </div>
                                 </div>
                             </a>
@@ -148,9 +311,10 @@
                     });
                 }
             } catch (error) {
-                container.innerHTML = '<p style="text-align:center; padding:3rem;">Failed to fetch intelligence data. Please try again later.</p>';
+                container.innerHTML = '<p style="text-align:center; padding:3rem;">Ошибка загрузки данных. Пожалуйста, попробуйте позже.</p>';
             }
         }
+
         document.addEventListener('DOMContentLoaded', fetchNews);
     </script>
 </body>
