@@ -1,0 +1,1369 @@
+{
+  "lastUpdated": "2026-02-12T14:21:07Z",
+  "items": [
+    {
+      "id": "9059334022f7",
+      "date": "2026-02-09",
+      "title": "Hackers exploit SolarWinds WHD flaws to deploy DFIR tool in attacks",
+      "url": "https://www.bleepingcomputer.com/news/security/threat-actors-exploit-solarwinds-wdh-flaws-to-deploy-velociraptor/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Vulnerability",
+        "Data breach"
+      ],
+      "tech": [
+        "Cloud"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация.",
+        "Проверить, используются ли затронутые сервисы/подрядчики в вашей организации.",
+        "Оценить необходимость смены паролей и ротации ключей/токенов, связанных с затронутым сервисом."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://www.bleepingcomputer.com/news/security/threat-actors-exploit-solarwinds-wdh-flaws-to-deploy-velociraptor/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        },
+        {
+          "name": "AWS CLI: базовая проверка публичных бакетов S3",
+          "language": "bash",
+          "body": "# Требуется настроенный AWS CLI и права на просмотр S3\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "bc7a9f657c10",
+      "date": "2026-02-09",
+      "title": "Hackers breach SmarterTools network using flaw in its own software",
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-breach-smartertools-network-using-flaw-in-its-own-software/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Ransomware",
+        "Data breach",
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Проверить актуальность резервных копий и возможность восстановления без выкупа.",
+        "Провести инвентарь открытых RDP/VPN-доступов и ограничить их по MFA и сети.",
+        "Проверить наличие инструментов EDR/XDR на всех критичных узлах.",
+        "Проверить, используются ли затронутые сервисы/подрядчики в вашей организации.",
+        "Оценить необходимость смены паролей и ротации ключей/токенов, связанных с затронутым сервисом.",
+        "Провести таргетированное обучение сотрудников по новым шаблонам фишинга.",
+        "Проверить политики MFA и невозможность обхода через устаревшие протоколы (POP/IMAP, legacy auth)."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "M365: поиск подозрительных входов (пример AzureAD / Entra)",
+          "language": "powershell",
+          "body": "# Требуется модуль AzureAD / MSGraph и права чтения логов\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"your_country_ip_range*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "84c427992b2a",
+      "date": "2026-02-09",
+      "title": "Password guessing without AI: How attackers build targeted wordlists",
+      "url": "https://www.bleepingcomputer.com/news/security/password-guessing-without-ai-how-attackers-build-targeted-wordlists/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "021f21373368",
+      "date": "2026-02-09",
+      "title": "BeyondTrust warns of critical RCE flaw in remote support software",
+      "url": "https://www.bleepingcomputer.com/news/security/beyondtrust-warns-of-critical-rce-flaw-in-remote-support-software/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "edd97ce3b198",
+      "date": "2026-02-09",
+      "title": "Men charged in FanDuel scheme fueled by thousands of stolen identities",
+      "url": "https://www.bleepingcomputer.com/news/security/men-charged-in-massive-fanduel-fraud-scheme-fueled-by-thousands-of-stolen-identities/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "bc06193fbfd6",
+      "date": "2026-02-09",
+      "title": "Microsoft: Exchange Online flags legitimate emails as phishing",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-exchange-online-flags-legitimate-emails-as-phishing/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Phishing"
+      ],
+      "tech": [
+        "Windows",
+        "M365"
+      ],
+      "recommendations": [
+        "Провести таргетированное обучение сотрудников по новым шаблонам фишинга.",
+        "Проверить политики MFA и невозможность обхода через устаревшие протоколы (POP/IMAP, legacy auth)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: поиск подозрительных входов (пример AzureAD / Entra)",
+          "language": "powershell",
+          "body": "# Требуется модуль AzureAD / MSGraph и права чтения логов\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"your_country_ip_range*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "acf7f1b64dde",
+      "date": "2026-02-08",
+      "title": "European Commission discloses breach that exposed staff data",
+      "url": "https://www.bleepingcomputer.com/news/security/european-commission-discloses-breach-that-exposed-staff-data/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Проверить, используются ли затронутые сервисы/подрядчики в вашей организации.",
+        "Оценить необходимость смены паролей и ротации ключей/токенов, связанных с затронутым сервисом."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "e8ab5e8716d0",
+      "date": "2026-02-08",
+      "title": "New tool blocks imposter attacks disguised as safe commands",
+      "url": "https://www.bleepingcomputer.com/news/security/new-tool-blocks-imposter-attacks-disguised-as-safe-commands/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "4c0bf6fcf155",
+      "date": "2026-02-07",
+      "title": "State actor targets 155 countries in 'Shadow Campaigns' espionage op",
+      "url": "https://www.bleepingcomputer.com/news/security/state-actor-targets-155-countries-in-shadow-campaigns-espionage-op/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "4d0656877a43",
+      "date": "2026-02-09",
+      "title": "Warlock Gang Breaches SmarterTools Via SmarterMail Bugs",
+      "url": "https://www.darkreading.com/application-security/warlock-gang-breaches-smartertools-smartermail-bugs",
+      "source": "Dark Reading",
+      "tags": [
+        "Ransomware",
+        "Vulnerability",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Проверить актуальность резервных копий и возможность восстановления без выкупа.",
+        "Провести инвентарь открытых RDP/VPN-доступов и ограничить их по MFA и сети.",
+        "Проверить наличие инструментов EDR/XDR на всех критичных узлах.",
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация.",
+        "Проверить, используются ли затронутые сервисы/подрядчики в вашей организации.",
+        "Оценить необходимость смены паролей и ротации ключей/токенов, связанных с затронутым сервисом."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://www.darkreading.com/application-security/warlock-gang-breaches-smartertools-smartermail-bugs\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "6b5aceee2f49",
+      "date": "2026-02-09",
+      "title": "TeamPCP Turns Cloud Infrastructure into Crime Bots",
+      "url": "https://www.darkreading.com/cloud-security/teampcp-cloud-infrastructure-crime-bots",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Cloud"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "AWS CLI: базовая проверка публичных бакетов S3",
+          "language": "bash",
+          "body": "# Требуется настроенный AWS CLI и права на просмотр S3\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "6a20dd48964c",
+      "date": "2026-02-09",
+      "title": "'Reynolds' Bundles BYOVD With Ransomware Payload",
+      "url": "https://www.darkreading.com/threat-intelligence/black-basta-bundles-byovd-ransomware-payload",
+      "source": "Dark Reading",
+      "tags": [
+        "Malware",
+        "Ransomware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Проверить актуальность резервных копий и возможность восстановления без выкупа.",
+        "Провести инвентарь открытых RDP/VPN-доступов и ограничить их по MFA и сети.",
+        "Проверить наличие инструментов EDR/XDR на всех критичных узлах.",
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "0fd3ee52c727",
+      "date": "2026-03-19",
+      "title": "[Virtual Event] Shields Up: Key Technologies Reshaping Cybersecurity Defenses",
+      "url": "https://www.darkreading.com/events/shields-up-key-technologies-reshaping-cybersecurity-defenses",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "05d71fe2d711",
+      "date": "2026-02-06",
+      "title": "'Encrypt It Already' Campaign Pushes Big Tech to Prioritize E2E Encryption",
+      "url": "https://www.darkreading.com/cloud-security/encrypt-it-already-pushes-big-tech-e2e-encryption",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "ec820a1047a6",
+      "date": "2026-02-06",
+      "title": "Shai-hulud: The Hidden Costs of Supply Chain Attacks",
+      "url": "https://www.darkreading.com/application-security/shai-hulud-hidden-cost-supply-chain-attacks",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "3c4bc5c339af",
+      "date": "2026-02-06",
+      "title": "OpenClaw's Gregarious Insecurities Make Safe Usage Difficult",
+      "url": "https://www.darkreading.com/application-security/openclaw-insecurities-safe-usage-difficult",
+      "source": "Dark Reading",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "c37655fc26cd",
+      "date": "2026-02-05",
+      "title": "EnCase Driver Weaponized as EDR Killers Persist",
+      "url": "https://www.darkreading.com/threat-intelligence/encase-driver-weaponized-edr-killers-persist",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "bd37bb81bc0c",
+      "date": "2026-02-05",
+      "title": "Agentic AI Site 'Moltbook' Is Riddled With Security Risks",
+      "url": "https://www.darkreading.com/cyber-risk/agentic-ai-moltbook-security-risks",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "db47d3d18a61",
+      "date": "2026-02-05",
+      "title": "Data Tool to Triage Exploited Vulnerabilities Can Make KEV More Useful",
+      "url": "https://www.darkreading.com/threat-intelligence/data-tool-triage-exploited-vulnerabilities-make-kev-catalog-more-useful",
+      "source": "Dark Reading",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://www.darkreading.com/threat-intelligence/data-tool-triage-exploited-vulnerabilities-make-kev-catalog-more-useful\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "b3c00659835b",
+      "date": "2026-02-10",
+      "title": "Fortinet Patches Critical SQLi Flaw Enabling Unauthenticated Code Execution",
+      "url": "https://thehackernews.com/2026/02/fortinet-patches-critical-sqli-flaw.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://thehackernews.com/2026/02/fortinet-patches-critical-sqli-flaw.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "4fe26708d087",
+      "date": "2026-02-12",
+      "title": "ThreatsDay Bulletin: AI Prompt RCE, Claude 0-Click, RenEngine Loader, Auto 0-Days & 25+ Stories",
+      "url": "https://thehackernews.com/2026/02/threatsday-bulletin-ai-prompt-rce.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Malware",
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу.",
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://thehackernews.com/2026/02/threatsday-bulletin-ai-prompt-rce.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "c064b71dcec2",
+      "date": "2026-02-12",
+      "title": "The CTEM Divide: Why 84% of Security Programs Are Falling Behind",
+      "url": "https://thehackernews.com/2026/02/the-ctem-divide-why-84-of-security.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "a85675565d7f",
+      "date": "2026-02-12",
+      "title": "83% of Ivanti EPMM Exploits Linked to Single IP on Bulletproof Hosting Infrastructure",
+      "url": "https://thehackernews.com/2026/02/83-of-ivanti-epmm-exploits-linked-to.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://thehackernews.com/2026/02/83-of-ivanti-epmm-exploits-linked-to.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "5317c724f850",
+      "date": "2026-02-12",
+      "title": "Apple Fixes Exploited Zero-Day Affecting iOS, macOS, and Apple Devices",
+      "url": "https://thehackernews.com/2026/02/apple-fixes-exploited-zero-day.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://thehackernews.com/2026/02/apple-fixes-exploited-zero-day.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "ab1e2e00d11d",
+      "date": "2026-02-11",
+      "title": "First Malicious Outlook Add-In Found Stealing 4,000+ Microsoft Credentials",
+      "url": "https://thehackernews.com/2026/02/first-malicious-outlook-add-in-found.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Account takeover"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "recommendations": [
+        "Провести таргетированное обучение сотрудников по новым шаблонам фишинга.",
+        "Проверить политики MFA и невозможность обхода через устаревшие протоколы (POP/IMAP, legacy auth)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: поиск подозрительных входов (пример AzureAD / Entra)",
+          "language": "powershell",
+          "body": "# Требуется модуль AzureAD / MSGraph и права чтения логов\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"your_country_ip_range*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "6b193af7e0dd",
+      "date": "2026-02-11",
+      "title": "APT36 and SideCopy Launch Cross-Platform RAT Campaigns Against Indian Entities",
+      "url": "https://thehackernews.com/2026/02/apt36-and-sidecopy-launch-cross.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Windows",
+        "Linux"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "640ad5619122",
+      "date": "2026-02-11",
+      "title": "Over 60 Software Vendors Issue Security Fixes Across OS, Cloud, and Network Platforms",
+      "url": "https://thehackernews.com/2026/02/over-60-software-vendors-issue-security.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows",
+        "Cloud"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "AWS CLI: базовая проверка публичных бакетов S3",
+          "language": "bash",
+          "body": "# Требуется настроенный AWS CLI и права на просмотр S3\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "8555b4fc0197",
+      "date": "2026-02-11",
+      "title": "Exposed Training Open the Door for Crypto-Mining in Fortune 500 Cloud Environments",
+      "url": "https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Malware",
+        "Data breach"
+      ],
+      "tech": [
+        "Cloud"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу.",
+        "Проверить, используются ли затронутые сервисы/подрядчики в вашей организации.",
+        "Оценить необходимость смены паролей и ротации ключей/токенов, связанных с затронутым сервисом."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "AWS CLI: базовая проверка публичных бакетов S3",
+          "language": "bash",
+          "body": "# Требуется настроенный AWS CLI и права на просмотр S3\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "b690cac87aeb",
+      "date": "2026-02-11",
+      "title": "Microsoft Patches 59 Vulnerabilities Including Six Actively Exploited Zero-Days",
+      "url": "https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Windows",
+        "Cloud"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        },
+        {
+          "name": "AWS CLI: базовая проверка публичных бакетов S3",
+          "language": "bash",
+          "body": "# Требуется настроенный AWS CLI и права на просмотр S3\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "10adbb41a76e",
+      "date": "2026-02-11",
+      "title": "SSHStalker Botnet Uses IRC C2 to Control Linux Systems via Legacy Kernel Exploits",
+      "url": "https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html",
+      "source": "The Hacker News",
+      "tags": [
+        "Malware",
+        "Vulnerability"
+      ],
+      "tech": [
+        "Linux"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу.",
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "6ce20ac4aa20",
+      "date": "2026-02-12",
+      "title": "Fake AI Chrome extensions with 300K users steal credentials, emails",
+      "url": "https://www.bleepingcomputer.com/news/security/fake-ai-chrome-extensions-with-300k-users-steal-credentials-emails/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Провести таргетированное обучение сотрудников по новым шаблонам фишинга.",
+        "Проверить политики MFA и невозможность обхода через устаревшие протоколы (POP/IMAP, legacy auth)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: поиск подозрительных входов (пример AzureAD / Entra)",
+          "language": "powershell",
+          "body": "# Требуется модуль AzureAD / MSGraph и права чтения логов\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"your_country_ip_range*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "d6a6d1f46d77",
+      "date": "2026-02-12",
+      "title": "Google says hackers are abusing Gemini AI for all attacks stages",
+      "url": "https://www.bleepingcomputer.com/news/security/google-says-hackers-are-abusing-gemini-ai-for-all-attacks-stages/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Проверить, используются ли затронутые сервисы/подрядчики в вашей организации.",
+        "Оценить необходимость смены паролей и ротации ключей/токенов, связанных с затронутым сервисом."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "05755a076a07",
+      "date": "2026-02-12",
+      "title": "Apple fixes zero-day flaw used in 'extremely sophisticated' attacks",
+      "url": "https://www.bleepingcomputer.com/news/security/apple-fixes-zero-day-flaw-used-in-extremely-sophisticated-attacks/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://www.bleepingcomputer.com/news/security/apple-fixes-zero-day-flaw-used-in-extremely-sophisticated-attacks/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "fb1205232f72",
+      "date": "2026-02-11",
+      "title": "Windows 11 Notepad flaw let files execute silently via Markdown links",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/windows-11-notepad-flaw-let-files-execute-silently-via-markdown-links/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://www.bleepingcomputer.com/news/microsoft/windows-11-notepad-flaw-let-files-execute-silently-via-markdown-links/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "10ee7108428a",
+      "date": "2026-02-11",
+      "title": "Microsoft Store Outlook add-in hijacked to steal 4,000 Microsoft accounts",
+      "url": "https://www.bleepingcomputer.com/news/security/microsoft-store-outlook-add-in-hijacked-to-steal-4-000-microsoft-accounts/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Phishing",
+        "Account takeover"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "recommendations": [
+        "Провести таргетированное обучение сотрудников по новым шаблонам фишинга.",
+        "Проверить политики MFA и невозможность обхода через устаревшие протоколы (POP/IMAP, legacy auth)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: поиск подозрительных входов (пример AzureAD / Entra)",
+          "language": "powershell",
+          "body": "# Требуется модуль AzureAD / MSGraph и права чтения логов\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"your_country_ip_range*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "093d651f7467",
+      "date": "2026-02-11",
+      "title": "Crazy ransomware gang abuses employee monitoring tool in attacks",
+      "url": "https://www.bleepingcomputer.com/news/security/crazy-ransomware-gang-abuses-employee-monitoring-tool-in-attacks/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Malware",
+        "Ransomware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Проверить актуальность резервных копий и возможность восстановления без выкупа.",
+        "Провести инвентарь открытых RDP/VPN-доступов и ограничить их по MFA и сети.",
+        "Проверить наличие инструментов EDR/XDR на всех критичных узлах.",
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "e090fe6afa1b",
+      "date": "2026-02-11",
+      "title": "Police arrest seller of JokerOTP MFA passcode capturing tool",
+      "url": "https://www.bleepingcomputer.com/news/security/police-arrest-seller-of-jokerotp-mfa-passcode-capturing-tool/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Phishing"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Провести таргетированное обучение сотрудников по новым шаблонам фишинга.",
+        "Проверить политики MFA и невозможность обхода через устаревшие протоколы (POP/IMAP, legacy auth)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: поиск подозрительных входов (пример AzureAD / Entra)",
+          "language": "powershell",
+          "body": "# Требуется модуль AzureAD / MSGraph и права чтения логов\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"your_country_ip_range*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "a5f4c33a8c70",
+      "date": "2026-02-11",
+      "title": "Proactive strategies for cyber resilience with Wazuh",
+      "url": "https://www.bleepingcomputer.com/news/security/proactive-strategies-for-cyber-resilience-with-wazuh/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "6dfbc0f6d639",
+      "date": "2026-02-11",
+      "title": "LummaStealer infections surge after CastleLoader malware campaigns",
+      "url": "https://www.bleepingcomputer.com/news/security/lummastealer-infections-surge-after-castleloader-malware-campaigns/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "f31b84b9e319",
+      "date": "2026-02-11",
+      "title": "Microsoft releases Windows 11 26H1 for select and upcoming CPUs",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/",
+      "source": "BleepingComputer",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "f0fb0efe1c82",
+      "date": "2026-02-12",
+      "title": "Senegalese Data Breaches Expose Lack of 'Security Maturity'",
+      "url": "https://www.darkreading.com/cyberattacks-data-breaches/hackers-breach-senegal-national-biometric-database",
+      "source": "Dark Reading",
+      "tags": [
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Проверить, используются ли затронутые сервисы/подрядчики в вашей организации.",
+        "Оценить необходимость смены паролей и ротации ключей/токенов, связанных с затронутым сервисом."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "b1482f54333b",
+      "date": "2026-02-11",
+      "title": "North Korea's UNC1069 Hammers Crypto Firms With AI",
+      "url": "https://www.darkreading.com/threat-intelligence/north-koreas-unc1069-hammers-crypto-firms",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "a6dc7bdaaf05",
+      "date": "2026-02-11",
+      "title": "How to Stay on Top of Future Threats With a Cutting-Edge SOC",
+      "url": "https://www.darkreading.com/cybersecurity-operations/stay-top-future-threats-cutting-edge-soc",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "e13c8890f9bd",
+      "date": "2026-02-11",
+      "title": "AI Rising: Do We Know Enough About the Data Populating It?",
+      "url": "https://www.darkreading.com/data-privacy/do-we-know-enough-about-data-populating-ai",
+      "source": "Dark Reading",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "dbf51f3f1e1b",
+      "date": "2026-02-11",
+      "title": "Top Cyber Industry Defenses Spike CO2 Emissions",
+      "url": "https://www.darkreading.com/application-security/cyber-industry-defenses-co2-emissions",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "59a00167e2e4",
+      "date": "2026-02-11",
+      "title": "Asia Fumbles With Throttling Back Telnet Traffic in Region",
+      "url": "https://www.darkreading.com/threat-intelligence/asia-fumbles-telnet-threat-traffic",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "e6158a42f1e8",
+      "date": "2026-02-10",
+      "title": "SolarWinds WHD Attacks Highlight Risks of Exposed Apps",
+      "url": "https://www.darkreading.com/vulnerabilities-threats/solarwinds-whd-attacks-exposed-apps",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "7ab3617209d7",
+      "date": "2026-02-10",
+      "title": "In Bypassing MFA, ZeroDayRAT Is 'Textbook Stalkerware'",
+      "url": "https://www.darkreading.com/threat-intelligence/zerodayrat-brings-commercial-spyware-to-mass-market",
+      "source": "Dark Reading",
+      "tags": [
+        "Malware",
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Запустить внеплановое антивирусное сканирование на серверах и рабочих станциях.",
+        "Собрать и проанализировать подозрительные бинарные файлы из Temp/AppData для реверса или отправки в песочницу.",
+        "Провести таргетированное обучение сотрудников по новым шаблонам фишинга.",
+        "Проверить политики MFA и невозможность обхода через устаревшие протоколы (POP/IMAP, legacy auth)."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: поиск подозрительных процессов и автозапуска",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: поиск подозрительных процессов и бинарей",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "M365: поиск подозрительных входов (пример AzureAD / Entra)",
+          "language": "powershell",
+          "body": "# Требуется модуль AzureAD / MSGraph и права чтения логов\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"your_country_ip_range*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "4ca4d74f2081",
+      "date": "2026-02-10",
+      "title": "Microsoft Patches 6 Actively Exploited Zero-Days",
+      "url": "https://www.darkreading.com/vulnerabilities-threats/microsoft-fixes-6-actively-exploited-zero-days",
+      "source": "Dark Reading",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Windows",
+        "Cloud"
+      ],
+      "recommendations": [
+        "Сопоставить затронутые версии ПО из новости с реально используемыми в инфраструктуре.",
+        "При отсутствии патча — внедрить временные меры: WAF-правила, ограничение доступа, сегментация."
+      ],
+      "scripts": [
+        {
+          "name": "Поиск обращения к URL из новости в web-логах (Linux)",
+          "language": "bash",
+          "body": "# Замените access.log на путь к вашим логам\ngrep -i \"https://www.darkreading.com/vulnerabilities-threats/microsoft-fixes-6-actively-exploited-zero-days\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        },
+        {
+          "name": "AWS CLI: базовая проверка публичных бакетов S3",
+          "language": "bash",
+          "body": "# Требуется настроенный AWS CLI и права на просмотр S3\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "24d575d571cf",
+      "date": "2026-02-10",
+      "title": "Automaker Secures the Supply Chain With Developer-Friendly Platform",
+      "url": "https://www.darkreading.com/application-security/automaker-secures-supply-chain-developer-friendly-platform",
+      "source": "Dark Reading",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "recommendations": [
+        "Оценить релевантность новости для вашей среды и сопоставить указанные техники с используемыми технологиями."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: поиск IOC из новости в логах",
+          "language": "bash",
+          "body": "# Замените PATTERN на домены/IP/URL из статьи:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    }
+  ]
+}
