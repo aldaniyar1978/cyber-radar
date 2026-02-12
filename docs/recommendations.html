@@ -147,34 +147,48 @@
       const res = await fetch('data/feed.json', { cache: 'no-cache' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
             const data = await res.json();
-                  const items = data.items || [];
-      if (!Array.isArray(items) || !items.length) {
-        container.innerHTML = '<p style="color:#f97316;">No recommendations yet.</p>';
-        return;
-      }
-
-      items.forEach(item => {
-        const card = document.createElement('section');
-        card.className = 'recommendation-card';
-            card.innerHTML = `
-              <div class="rec-meta">
-                <span class="rec-source">${item.source || 'Unknown'}</span>
-                <span class="rec-date">${item.date || ''}</span>
-                <span class="rec-severity ${item.severity || ''}">${(item.severity || 'unknown').toUpperCase()}</span>
-                <span class="rec-tag">${item.category || ''}</span>
-              </div>
-              <h2 class="rec-title">${item.title || '(no title)'}</h2>
-              <p class="rec-summary">${item.description || ''}</p>
-              <div class="rec-meta">
-                ${(item.tags || []).map(tag => `<span class="rec-tag">${tag}</span>`).join('')}
-              </div>
-              <div class="rec-foot">
-                <span class="rec-id">ID: ${item.id || ''}</span>
-                <span class="rec-status">Updated: ${item.date || ''}</span>
-              </div>
+    async function loadRecommendations() {
+        const container = document.getElementById('recommendations-list');
+        console.log('Starting to load recommendations...');
+        try {
+            const res = await fetch('data/feed.json', { cache: 'no-cache' });
+            console.log('Fetch response:', res.status);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            console.log('Data loaded:', data);
+            const items = data.items || [];
+            console.log('Items count:', items.length);
+            if (!items.length) {
+                container.innerHTML = '<p style="color:#f97316;">No recommendations yet.</p>';
+                return;
+            }
+            items.forEach((item, index) => {
+                console.log('Processing item', index, item);
+                const card = document.createElement('section');
+                card.className = 'recommendation-card';
+                card.innerHTML = `
+                    <div class="rec-meta">
+                        <span class="rec-source">${item.source || 'Unknown'}</span>
+                        <span class="rec-date">${item.date || ''}</span>
+                        <span class="rec-severity ${item.severity || ''}">${(item.severity || 'unknown').toUpperCase()}</span>
+                        <span class="rec-tag">${item.category || ''}</span>
+                    </div>
+                    <h2 class="rec-title">${item.title || '(no title)'}</h2>
+                    <p class="rec-summary">${item.description || ''}</p>
+                    <div class="rec-meta">
+                        ${(item.tags || []).map(tag => `<span class="rec-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="rec-foot">
+                        <span class="rec-id">ID: ${item.id || ''}</span>
+                        <span class="rec-status">Updated: ${item.date || ''}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            console.log('All items processed successfully');
+        } catch (e) {
+            console.error('Error loading recommendations:', e);
+            container.innerHTML = '<p style="color:#ff8f8f;">Failed to load: ' + e.message + '</p>';
+        }
     }
-  }
-  loadRecommendations();
-  </script>
-</body>
-</html>
+    loadRecommendations();
