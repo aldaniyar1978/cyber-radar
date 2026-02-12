@@ -6,6 +6,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
   <style>
+    <script>
+async function loadRecommendations() {
+    const container = document.getElementById('recommendations-list');
+    try {
+        const res = await fetch('data/feed.json');
+        const items = await res.json();
+
+        items.forEach(item => {
+            const card = document.createElement('section');
+            card.className = 'recommendation-card';
+            card.innerHTML = `
+                <div class="rec-meta">
+                    <span class="rec-source">News • ${item.title}</span>
+                    <span class="rec-date">${item.date}</span>
+                    <span class="rec-severity ${item.severity}">${item.severity.toUpperCase()}</span>
+                    <span class="rec-tag">${item.tag}</span>
+                </div>
+                <h2 class="rec-title">${item.title}</h2>
+                <p class="rec-summary">${item.recSummary}</p>
+
+                <div class="rec-grid">
+                    <div class="rec-block">
+                        <h3>Who should care</h3>
+                        <ul>${item.recWho.map(x => `<li>${x}</li>`).join('')}</ul>
+                    </div>
+                    <div class="rec-block">
+                        <h3>Risk snapshot</h3>
+                        <ul>${item.recRisk.map(x => `<li>${x}</li>`).join('')}</ul>
+                    </div>
+                </div>
+
+                <div class="rec-actions">
+                    <h3>Actions (0–24h)</h3>
+                    <ol>${item.recActions0_24.map(x => `<li>${x}</li>`).join('')}</ol>
+                    <h3>Actions (24–72h)</h3>
+                    <ol>${item.recActions24_72.map(x => `<li>${x}</li>`).join('')}</ol>
+                </div>
+
+                <div class="rec-detection">
+                    <h3>Detection ideas</h3>
+                    <ul>${item.recDetection.map(x => `<li>${x}</li>`).join('')}</ul>
+                </div>
+
+                <div class="rec-foot">
+                    <a href="news-${item.id}.html" class="rec-link">Read full news & context</a>
+                    <span class="rec-status">Last reviewed: ${item.date}</span>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    } catch (e) {
+        container.innerHTML = '<p style="color:#f97316;">Failed to load recommendations feed.</p>';
+        console.error(e);
+    }
+}
+loadRecommendations();
+</script>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
@@ -178,12 +235,11 @@
     </div>
   </header>
 
-  <main>
-    <div class="meta" id="meta"></div>
-    <div id="loader" class="loader">Loading recommendations…</div>
-    <div id="error" class="error" style="display:none;"></div>
-    <div id="cards"></div>
-  </main>
+  <main class="container" style="max-width: 1200px; margin: 3rem auto; padding: 0 1rem;">
+    <h1 style="color:#fff;">Security Recommendations</h1>
+    <p style="color:#94a3b8;">Автоматически сгенерированные рекомендации по последним инцидентам.</p>
+    <div id="recommendations-list"></div>
+</main>
 
   <script>
     async function loadRecommendations() {
