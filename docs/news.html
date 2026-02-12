@@ -47,26 +47,23 @@
     async function loadNews() {
         const container = document.getElementById('news-list');
         try {
-            const res = await fetch('data/feed.json');
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            const items = await res.json();
-
+            const res = await fetch('news.json');            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+                        const items = data.items || [];
             items.forEach(item => {
-                const card = document.createElement('article');
-                card.className = 'news-card';
-                card.innerHTML = `
-                    <h2 class="news-title">
-                        <a href="news-${item.id}.html">${item.newsTitle}</a>
-                    </h2>
-                    <div class="news-meta">
-                        <span>${item.date}</span>
-                        <span class="news-severity ${item.severity}">${item.severity.toUpperCase()}</span>
-                        <span>${item.tag}</span>
-                    </div>
-                    <p class="news-body">${item.newsBody}</p>
-                `;
-                container.appendChild(card);
-            });
+            const card = document.createElement('article');
+            card.className = 'news-card';
+            card.innerHTML = `
+                <h2 class="news-title">
+                    <a href="${item.url}" target="_blank">${item.title || '(no title)'}</a>
+                </h2>
+                <div class="news-meta">
+                    <span>${item.date || ''}</span>
+                    <span>${item.source || ''}</span>
+                    ${(item.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+                <p class="news-body">${item.summary || ''}</p>
+            `;            });
         } catch (e) {
             console.error(e);
             container.innerHTML = '<p style="color:#f97316;">Failed to load news feed.</p>';
