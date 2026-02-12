@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-import os
 from pathlib import Path
 from datetime import datetime
 
@@ -42,7 +41,7 @@ def classify_stack(text: str):
 
     if any(w in text_l for w in ["windows", "microsoft", "win32", "ntlm"]):
         tech.append("Windows")
-    if any(w in text_l for w in ["linux", "ubuntu", "debian", "centos", "red hat", "rhel"]):
+    if any(w in text_l for w in ["linux", "ubuntu", "debian", "centos", "red hat", "rhel", "kernel"]):
         tech.append("Linux")
     if any(w in text_l for w in ["nginx", "apache", "iis", "httpd"]):
         tech.append("WebServer")
@@ -50,20 +49,30 @@ def classify_stack(text: str):
         tech.append("VMware")
     if any(w in text_l for w in ["aws", "s3", "bucket", "azure", "gcp", "cloud"]):
         tech.append("Cloud")
-    if any(w in text_l for w in ["office 365", "m365", "exchange online"]):
+    if any(w in text_l for w in ["office 365", "m365", "exchange online", "sharepoint online"]):
         tech.append("M365")
+    if any(w in text_l for w in ["telco", "telecom", "isp", "5g", "carrier", "mobile operator"]):
+        tech.append("Telecom")
+    if any(w in text_l for w in ["ics", "scada", "plc", "ot network", "industrial control"]):
+        tech.append("ICS/OT")
 
     if not tech:
         tech.append("Generic")
     return tech
 
 
+def compute_severity(security_tags):
+    if "Ransomware" in security_tags or "Data breach" in security_tags:
+        return "High"
+    if "Vulnerability" in security_tags or "Account takeover" in security_tags:
+        return "Medium"
+    return "Low"
+
+
 def build_scripts(article, tech_tags, security_tags):
-    title = article["title"]
     url = article.get("url", "")
     scripts = []
 
-    # Generic helpers
     # Ransomware / Malware / Data breach
     if any(t in security_tags for t in ["Ransomware", "Malware", "Data breach"]):
         scripts.append(
@@ -136,7 +145,7 @@ grep -i "sshd" /var/log/auth.log /var/log/messages* 2>/dev/null | egrep "Failed|
         )
 
     # M365 / Phishing / Account takeover
-    if any(t in security_tags for t in ["Phishing", "Account takeover"]):
+    if any(t in security_tags for t in ["Phishing", "Account takeover"]) or "M365" in tech_tags:
         scripts.append(
             {
                 "name": "M365: search for suspicious sign‑ins in unified audit log",
@@ -164,7 +173,6 @@ grep -Ei "PATTERN" /var/log/* 2>/dev/null || echo "No hits for pattern"
         )
 
     return scripts
-
 
 
 def build_recommendations(article):
@@ -216,7 +224,24 @@ def build_recommendations(article):
         recos.extend(
             [
                 "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-                "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth, other non‑MFA flows).",
+                "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows).",
+            ]
+        )
+
+    # Telecom / ICS specific hints
+    if "Telecom" in tech_tags:
+        recos.extend(
+            [
+                "Review exposure of core network management interfaces (SSH, web, SNMP) on internet‑facing telecom devices.",
+                "Cross‑check the article’s TTPs against your current router/switch/AP firmware baselines.",
+            ]
+        )
+
+    if "ICS/OT" in tech_tags:
+        recos.extend(
+            [
+                "Validate that affected OT components are properly segmented from corporate IT networks.",
+                "Coordinate patching or mitigations with OT engineering teams to avoid impacting safety‑critical processes.",
             ]
         )
 
@@ -226,6 +251,7 @@ def build_recommendations(article):
         )
 
     scripts = build_scripts(article, tech_tags, security_tags)
+    severity = compute_severity(security_tags)
 
     return {
         "id": article["id"],
@@ -236,10 +262,10 @@ def build_recommendations(article):
         "summary": article.get("summary", ""),
         "tags": security_tags,
         "tech": tech_tags,
+        "severity": severity,
         "recommendations": recos,
         "scripts": scripts,
     }
-
 
 
 def main():
