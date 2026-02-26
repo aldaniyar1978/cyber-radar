@@ -1,6 +1,39 @@
 {
-  "lastUpdated": "2026-02-26T11:30:22Z",
+  "lastUpdated": "2026-02-26T12:32:27Z",
   "items": [
+    {
+      "id": "afc057b709a7",
+      "date": "2026-02-26",
+      "title": "New York sues Valve for promoting illegal gambling via game loot boxes",
+      "url": "https://www.bleepingcomputer.com/news/gaming/new-york-sues-valve-for-promoting-illegal-gambling-via-game-loot-boxes/",
+      "source": "BleepingComputer",
+      "summary": "New York Attorney General Letitia James sued video game developer and publisher Valve Corporation for using game loot boxes to facilitate illegal gambling activities among children and teenagers. [...",
+      "tags": [
+        "Malware",
+        "Steam",
+        "Gaming"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "3795e9fbfb07",
       "date": "2026-02-26",
@@ -6057,31 +6090,6 @@
       "url": "https://thehackernews.com/2026/02/malicious-chrome-extensions-caught.html",
       "source": "The Hacker News",
       "summary": "Cybersecurity researchers have discovered a malicious Google Chrome extension that's designed to steal data associated with Meta Business Suite and Facebook Business Manager.\nThe extension, named C...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "a2997cc05b92",
-      "date": "2026-02-13",
-      "title": "npm’s Update to Harden Their Supply Chain, and Points to Consider",
-      "url": "https://thehackernews.com/2026/02/npms-update-to-harden-their-supply.html",
-      "source": "The Hacker News",
-      "summary": "In December 2025, in response to the Sha1-Hulud incident, npm completed a major authentication overhaul intended to reduce supply-chain attacks. While the overhaul is a solid step forward, the chan...",
       "tags": [
         "Cybersecurity"
       ],
