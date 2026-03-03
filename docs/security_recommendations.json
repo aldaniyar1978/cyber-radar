@@ -1,6 +1,91 @@
 {
-  "lastUpdated": "2026-03-03T03:30:53Z",
+  "lastUpdated": "2026-03-03T08:33:48Z",
   "items": [
+    {
+      "id": "5fbbf81066dc",
+      "date": "2026-03-03",
+      "title": "Google Confirms CVE-2026-21385 in Qualcomm Android Component Exploited",
+      "url": "https://thehackernews.com/2026/03/google-confirms-cve-2026-21385-in.html",
+      "source": "The Hacker News",
+      "summary": "Google on Monday disclosed that a high-severity security flaw impacting an open-source Qualcomm component used in Android devices has been exploited in the wild.\nThe vulnerability in question is CV...",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/03/google-confirms-cve-2026-21385-in.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "69bbc4fce9a1",
+      "date": "2026-03-03",
+      "title": "SloppyLemming Targets Pakistan and Bangladesh Governments Using Dual Malware Chains",
+      "url": "https://thehackernews.com/2026/03/sloppylemming-targets-pakistan-and.html",
+      "source": "The Hacker News",
+      "summary": "The threat activity cluster known as SloppyLemming has been attributed to a fresh set of attacks targeting government entities and critical infrastructure operators in Pakistan and Bangladesh.\nThe ...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "43ba96257fc5",
+      "date": "2026-03-03",
+      "title": "Android gets patches for Qualcomm zero-day exploited in attacks",
+      "url": "https://www.bleepingcomputer.com/news/security/google-patches-android-zero-day-actively-exploited-in-attacks/",
+      "source": "BleepingComputer",
+      "summary": "Google has released security updates to patch 129 Android security vulnerabilities, including an actively exploited zero-day flaw in a Qualcomm display component. [...]",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Telecom"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
+        "Review exposure of core network management interfaces (SSH, web, SNMP) on internet‑facing telecom devices.",
+        "Cross‑check the article’s TTPs against your current router/switch/AP firmware baselines."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/google-patches-android-zero-day-actively-exploited-in-attacks/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
     {
       "id": "80d818391f80",
       "date": "2026-03-02",
@@ -5947,89 +6032,6 @@
           "name": "AWS CLI: basic public S3 bucket exposure check",
           "language": "bash",
           "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "fc045feb138c",
-      "date": "2026-02-18",
-      "title": "Singapore &amp; Its 4 Major Telcos Fend Off Chinese Hackers",
-      "url": "https://www.darkreading.com/cyberattacks-data-breaches/singapore-major-telcos-fend-chinese-hackers",
-      "source": "Dark Reading",
-      "summary": "After detecting a zero-day attack, the country's effective response was attributed to the tight relationship between its government and private industry.",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Telecom"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service.",
-        "Review exposure of core network management interfaces (SSH, web, SNMP) on internet‑facing telecom devices.",
-        "Cross‑check the article’s TTPs against your current router/switch/AP firmware baselines."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "13b5e6e495db",
-      "date": "2026-02-17",
-      "title": "Spain orders NordVPN, ProtonVPN to block LaLiga piracy sites",
-      "url": "https://www.bleepingcomputer.com/news/legal/spain-orders-nordvpn-protonvpn-to-block-laliga-piracy-sites/",
-      "source": "BleepingComputer",
-      "summary": "A Spanish court has granted precautionary measures against NordVPN and ProtonVPN, ordering the two popular VPN providers to block 16 websites that facilitate piracy of football matches. [...]",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "9686e1501eaa",
-      "date": "2026-02-17",
-      "title": "Spain orders NordVPN and ProtonVPN to block LaLiga stream piracy",
-      "url": "https://www.bleepingcomputer.com/news/legal/spain-orders-nordvpn-and-protonvpn-to-block-laliga-stream-piracy/",
-      "source": "BleepingComputer",
-      "summary": "A Spanish court has granted precautionary measures against NordVPN and ProtonVPN, ordering the two popular VPN providers to block 16 websites that facilitate piracy of football matches. [...]",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
