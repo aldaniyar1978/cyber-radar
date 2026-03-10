@@ -1,6 +1,73 @@
 {
-  "lastUpdated": "2026-03-10T08:25:17Z",
+  "lastUpdated": "2026-03-10T11:04:29Z",
   "items": [
+    {
+      "id": "5f6dbafd01a2",
+      "date": "2026-03-10",
+      "title": "Microsoft to enable Windows hotpatch security updates by default",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-to-enable-hotpatch-security-updates-by-default-in-may/",
+      "source": "BleepingComputer",
+      "summary": "Microsoft will turn on hotpatch security updates by default for all eligible Windows devices managed through Microsoft Intune and the Microsoft Graph API, beginning with the May 2026 Windows securi...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "3c435a334291",
+      "date": "2026-03-10",
+      "title": "APT28 hackers deploy customized variant of Covenant open-source tool",
+      "url": "https://www.bleepingcomputer.com/news/security/apt28-hackers-deploy-customized-variant-of-covenant-open-source-tool/",
+      "source": "BleepingComputer",
+      "summary": "The Russian state-sponsored APT28 threat group is using a custom variant of the open-source Covenant post-exploitation framework for long-term espionage operations. [...]",
+      "tags": [
+        "Malware",
+        "Vulnerability",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/apt28-hackers-deploy-customized-variant-of-covenant-open-source-tool/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
     {
       "id": "b515fd7c8811",
       "date": "2026-03-10",
@@ -6047,78 +6114,6 @@
           "name": "Generic: search for IOCs from the article across logs",
           "language": "bash",
           "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "207773166268",
-      "date": "2026-02-25",
-      "title": "'Richter Scale' Model Measures Magnitude of OT Cyber Incidents",
-      "url": "https://www.darkreading.com/ics-ot-security/richter-scale-model-measures-cyber-incidents",
-      "source": "Dark Reading",
-      "summary": "ICS/OT experts have devised a scoring system for rating the severity and effects of cybersecurity events in operational technology environments.",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "ICS/OT"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Validate that affected OT components are properly segmented from corporate IT networks.",
-        "Coordinate patching or mitigations with OT engineering teams to avoid impacting safety‑critical processes."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "815c69c06eec",
-      "date": "2026-02-25",
-      "title": "US sanctions Russian broker for buying stolen zero-day exploits",
-      "url": "https://www.bleepingcomputer.com/news/security/us-sanctions-russian-exploit-broker-for-buying-stolen-zero-days/",
-      "source": "BleepingComputer",
-      "summary": "The U.S. Treasury Department has sanctioned a Russian exploit broker who bought stolen hacking tools from a former executive of a U.S. defense contractor. [...]",
-      "tags": [
-        "Vulnerability",
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/us-sanctions-russian-exploit-broker-for-buying-stolen-zero-days/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
         }
       ]
     }
