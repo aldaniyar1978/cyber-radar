@@ -1,6 +1,123 @@
 {
-  "lastUpdated": "2026-03-12T12:27:56Z",
+  "lastUpdated": "2026-03-12T14:38:26Z",
   "items": [
+    {
+      "id": "8d3224d6fa88",
+      "date": "2026-03-12",
+      "title": "How to Scale Phishing Detection in Your SOC: 3 Steps for CISOs",
+      "url": "https://thehackernews.com/2026/03/how-to-scale-phishing-detection-in-your.html",
+      "source": "The Hacker News",
+      "summary": "Phishing has quietly turned into one of the hardest enterprise threats to expose early. Instead of crude lures and obvious payloads, modern campaigns rely on trusted infrastructure, legitimate-look...",
+      "tags": [
+        "Phishing"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "5ecdc4150dbe",
+      "date": "2026-03-12",
+      "title": "ThreatsDay Bulletin: OAuth Trap, EDR Killer, Signal Phishing, Zombie ZIP, AI Platform Hack & More",
+      "url": "https://thehackernews.com/2026/03/threatsday-bulletin-oauth-trap-edr.html",
+      "source": "The Hacker News",
+      "summary": "Another Thursday, another pile of weird security stuff that somehow happened in just seven days. Some of it is clever. Some of it is lazy. A few bits fall into that uncomfortable category of “yeah…...",
+      "tags": [
+        "Phishing",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service.",
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "63e4add98466",
+      "date": "2026-03-12",
+      "title": "Going the Extra Mile: Travel Rewards Turn into Underground Currency.",
+      "url": "https://www.bleepingcomputer.com/news/security/going-the-extra-mile-travel-rewards-turn-into-underground-currency/",
+      "source": "BleepingComputer",
+      "summary": "Stolen airline miles are converted into flights and hotel stays, then resold as discounted travel. Flare shows how cybercriminals and underground markets treat loyalty accounts like tradable curren...",
+      "tags": [
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "474f7fc252f9",
+      "date": "2026-03-12",
+      "title": "Apple patches older iPhones and iPads against Coruna exploits",
+      "url": "https://www.bleepingcomputer.com/news/apple/apple-patches-older-iphones-and-ipads-against-coruna-exploits/",
+      "source": "BleepingComputer",
+      "summary": "​Apple has released security updates to patch older iPhones and iPads against a set of vulnerabilities targeted in cyberespionage and crypto-theft attacks using the Coruna exploit kit. [...]",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/apple/apple-patches-older-iphones-and-ipads-against-coruna-exploits/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
     {
       "id": "7210402485c1",
       "date": "2026-03-12",
@@ -6016,122 +6133,6 @@
           "name": "Linux: hunt for suspicious processes and SUID binaries",
           "language": "bash",
           "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "60967ab4dfe4",
-      "date": "2026-02-27",
-      "title": "900+ Sangoma FreePBX Instances Compromised in Ongoing Web Shell Attacks",
-      "url": "https://thehackernews.com/2026/02/900-sangoma-freepbx-instances.html",
-      "source": "The Hacker News",
-      "summary": "The Shadowserver Foundation has revealed that over 900 Sangoma FreePBX instances still remain infected with web shells as part of attacks that exploited a command injection vulnerability starting i...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/02/900-sangoma-freepbx-instances.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "e3dc7909a2dd",
-      "date": "2026-02-27",
-      "title": "Europol-led crackdown on The Com hackers leads to 30 arrests",
-      "url": "https://www.bleepingcomputer.com/news/security/police-crackdown-on-the-com-cybercrime-gang-leads-to-30-arrests/",
-      "source": "BleepingComputer",
-      "summary": "A yearlong Europol-coordinated operation dubbed \"Project Compass\" has led to 30 arrests and 179 suspects being tied to \"The Com,\" an online cybercrime collective that targets children and teenagers...",
-      "tags": [
-        "Malware",
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "ed9c2a85c701",
-      "date": "2026-02-27",
-      "title": "The Case for Why Better Breach Transparency Matters",
-      "url": "https://www.darkreading.com/cyberattacks-data-breaches/why-better-breach-transparency-matters",
-      "source": "Dark Reading",
-      "summary": "It's become a standard practice for organizations to disclose the bare minimum about a data breach, or worse — not disclose the incident at all.",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "7a435cd93718",
-      "date": "2026-02-27",
-      "title": "Malicious Go Crypto Module Steals Passwords, Deploys Rekoobe Backdoor",
-      "url": "https://thehackernews.com/2026/02/malicious-go-crypto-module-steals.html",
-      "source": "The Hacker News",
-      "summary": "Cybersecurity researchers have disclosed details of a malicious Go module that's designed to harvest passwords, create persistent access via SSH, and deliver a Linux backdoor named Rekoobe.\nThe Go ...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Linux"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
