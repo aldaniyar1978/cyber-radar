@@ -1,6 +1,65 @@
 {
-  "lastUpdated": "2026-03-13T17:54:48Z",
+  "lastUpdated": "2026-03-13T18:24:12Z",
   "items": [
+    {
+      "id": "affe345a6fab",
+      "date": "2026-03-13",
+      "title": "Chinese Hackers Target Southeast Asian Militaries with AppleChris and MemFun Malware",
+      "url": "https://thehackernews.com/2026/03/chinese-hackers-target-southeast-asian.html",
+      "source": "The Hacker News",
+      "summary": "A suspected China-based cyber espionage operation has targeted Southeast Asian military organizations as part of a state-sponsored campaign that dates back to at least 2020.\nPalo Alto Networks Unit...",
+      "tags": [
+        "Malware",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "71c2175bc2f4",
+      "date": "2026-03-13",
+      "title": "Meta to Shut Down Instagram End-to-End Encrypted Chat Support Starting May 2026",
+      "url": "https://thehackernews.com/2026/03/meta-to-shut-down-instagram-end-to-end.html",
+      "source": "The Hacker News",
+      "summary": "Meta has announced plans to discontinue support for end-to-end encryption (E2EE) for chats on Instagram after May 8, 2026.\n\"If you have chats that are impacted by this change, you will see instruct...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "5bce6ab648d8",
       "date": "2026-03-13",
@@ -6224,63 +6283,6 @@
         "Ensure EDR/XDR coverage and logging are enabled on all high-value assets.",
         "Verify whether the impacted service, vendor, or product is used inside your organization.",
         "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "5fbbf81066dc",
-      "date": "2026-03-03",
-      "title": "Google Confirms CVE-2026-21385 in Qualcomm Android Component Exploited",
-      "url": "https://thehackernews.com/2026/03/google-confirms-cve-2026-21385-in.html",
-      "source": "The Hacker News",
-      "summary": "Google on Monday disclosed that a high-severity security flaw impacting an open-source Qualcomm component used in Android devices has been exploited in the wild.\nThe vulnerability in question is CV...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/03/google-confirms-cve-2026-21385-in.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "69bbc4fce9a1",
-      "date": "2026-03-03",
-      "title": "SloppyLemming Targets Pakistan and Bangladesh Governments Using Dual Malware Chains",
-      "url": "https://thehackernews.com/2026/03/sloppylemming-targets-pakistan-and.html",
-      "source": "The Hacker News",
-      "summary": "The threat activity cluster known as SloppyLemming has been attributed to a fresh set of attacks targeting government entities and critical infrastructure operators in Pakistan and Bangladesh.\nThe ...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
       ],
       "scripts": [
         {
