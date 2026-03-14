@@ -1,6 +1,37 @@
 {
-  "lastUpdated": "2026-03-13T22:17:05Z",
+  "lastUpdated": "2026-03-14T13:57:58Z",
   "items": [
+    {
+      "id": "528fb5062c57",
+      "date": "2026-03-14",
+      "title": "GlassWorm Supply-Chain Attack Abuses 72 Open VSX Extensions to Target Developers",
+      "url": "https://thehackernews.com/2026/03/glassworm-supply-chain-attack-abuses-72.html",
+      "source": "The Hacker News",
+      "summary": "Cybersecurity researchers have flagged a new iteration of the GlassWorm campaign that they say represents a \"significant escalation\" in how it propagates through the Open VSX registry.\n\"Instead of ...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "94faced73818",
       "date": "2026-03-13",
@@ -6229,37 +6260,6 @@
           "name": "Generic: search for IOCs from the article across logs",
           "language": "bash",
           "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "c24480aace8e",
-      "date": "2026-03-02",
-      "title": "Quantum-Resistant Data Diode Secures Sensitive Data on Edge Devices, Critical Systems",
-      "url": "https://www.darkreading.com/ics-ot-security/quantum-resistant-data-diode-secures-sensitive-data-on-edge-devices-critical-systems",
-      "source": "Dark Reading",
-      "summary": "Forward Edge-AI's new Isidore Quantum is a compact, low-power hardware device designed to defend sensitive operational technology endpoints against future quantum attacks.",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
         }
       ]
     }
