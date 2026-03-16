@@ -1,6 +1,37 @@
 {
-  "lastUpdated": "2026-03-16T07:16:10Z",
+  "lastUpdated": "2026-03-16T10:41:02Z",
   "items": [
+    {
+      "id": "9fef1d27c9f5",
+      "date": "2026-03-16",
+      "title": "DRILLAPP Backdoor Targets Ukraine, Abuses Microsoft Edge Debugging for Stealth Espionage",
+      "url": "https://thehackernews.com/2026/03/drillapp-backdoor-targets-ukraine.html",
+      "source": "The Hacker News",
+      "summary": "Ukrainian entities have emerged as the target of a new campaign likely orchestrated by threat actors linked to Russia, according to a report from S2 Grupo's LAB52 threat intelligence team.\nThe camp...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "9b3ad989051d",
       "date": "2026-03-16",
@@ -6221,31 +6252,6 @@
       "url": "https://www.darkreading.com/cyber-risk/speakeasies-shadow-ai-banning-ai-browsers-fail",
       "source": "Dark Reading",
       "summary": "Lessons from history highlight why AI-enabled browsers require controlled enablement.",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "855c597c9547",
-      "date": "2026-03-03",
-      "title": "Fake Tech Support Spam Deploys Customized Havoc C2 Across Organizations",
-      "url": "https://thehackernews.com/2026/03/fake-tech-support-spam-deploys.html",
-      "source": "The Hacker News",
-      "summary": "Threat hunters have called attention to a new campaign as part of which bad actors masqueraded as fake IT support to deliver the Havoc command-and-control (C2) framework as a precursor to data exfi...",
       "tags": [
         "Cybersecurity"
       ],
