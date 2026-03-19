@@ -1,6 +1,40 @@
 {
-  "lastUpdated": "2026-03-19T19:38:09Z",
+  "lastUpdated": "2026-03-19T20:23:09Z",
   "items": [
+    {
+      "id": "34fe33b1a401",
+      "date": "2026-03-19",
+      "title": "New ‘PolyShell’ flaw allows unauthenticated RCE on Magento e-stores",
+      "url": "https://www.bleepingcomputer.com/news/security/new-polyshell-flaw-allows-unauthenticated-rce-on-magento-e-stores/",
+      "source": "BleepingComputer",
+      "summary": "A newly disclosed vulnerability dubbed 'PolyShell' affects all Magento Open Source and Adobe Commerce stable version 2 installations, allowing unauthenticated code execution and account takeover. [...",
+      "tags": [
+        "Vulnerability",
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/new-polyshell-flaw-allows-unauthenticated-rce-on-magento-e-stores/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        },
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
     {
       "id": "8f4b2f1a2bff",
       "date": "2026-03-19",
@@ -6229,31 +6263,6 @@
           "name": "AWS CLI: basic public S3 bucket exposure check",
           "language": "bash",
           "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "0b4948679d46",
-      "date": "2026-03-07",
-      "title": "OpenAI Codex Security Scanned 1.2 Million Commits and Found 10,561 High-Severity Issues",
-      "url": "https://thehackernews.com/2026/03/openai-codex-security-scanned-12.html",
-      "source": "The Hacker News",
-      "summary": "OpenAI on Friday began rolling out Codex Security, an artificial intelligence (AI)-powered security agent that's designed to find, validate, and propose fixes for vulnerabilities.\nThe feature is av...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
