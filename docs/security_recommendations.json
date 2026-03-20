@@ -1,6 +1,63 @@
 {
-  "lastUpdated": "2026-03-20T06:08:51Z",
+  "lastUpdated": "2026-03-20T07:15:46Z",
   "items": [
+    {
+      "id": "65a2a002590f",
+      "date": "2026-03-20",
+      "title": "DoJ Disrupts 3 Million-Device IoT Botnets Behind Record 31.4 Tbps Global DDoS Attacks",
+      "url": "https://thehackernews.com/2026/03/doj-disrupts-3-million-device-iot.html",
+      "source": "The Hacker News",
+      "summary": "The U.S. Department of Justice (DoJ) on Thursday announced the disruption of command-and-control (C2) infrastructure used by several Internet of Things (IoT) botnets like AISURU, Kimwolf, JackSkid,...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "8b950302497e",
+      "date": "2026-03-20",
+      "title": "Ex-data analyst stole company data in $2.5M extortion scheme",
+      "url": "https://www.bleepingcomputer.com/news/security/data-analyst-found-guilty-of-extorting-brightly-software-of-25-million/",
+      "source": "BleepingComputer",
+      "summary": "A North Carolina man was found guilty of extorting a D.C.-based technology company while still being employed as a data analyst contractor. [...]",
+      "tags": [
+        "Ransomware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Validate the integrity and recoverability of recent backups for all critical systems.",
+        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
+        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "0c05571ecd6a",
       "date": "2026-03-20",
@@ -6182,62 +6239,6 @@
       "tech": [
         "Windows",
         "Linux"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "cf1c67bf8883",
-      "date": "2026-03-09",
-      "title": "Can the Security Platform Finally Deliver for the Mid-Market?",
-      "url": "https://thehackernews.com/2026/03/can-security-platform-finally-deliver.html",
-      "source": "The Hacker News",
-      "summary": "Mid-market organizations are constantly striving to achieve security levels on a par with their enterprise peers. With heightened awareness of supply chain attacks, your customers and business part...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "638e054b751c",
-      "date": "2026-03-09",
-      "title": "Chrome Extension Turns Malicious After Ownership Transfer, Enabling Code Injection and Data Theft",
-      "url": "https://thehackernews.com/2026/03/chrome-extension-turns-malicious-after.html",
-      "source": "The Hacker News",
-      "summary": "Two Google Chrome extensions have turned malicious after what appears to be a case of ownership transfer, offering attackers a way to push malware to downstream customers, inject arbitrary code, an...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
       ],
       "severity": "Low",
       "recommendations": [
