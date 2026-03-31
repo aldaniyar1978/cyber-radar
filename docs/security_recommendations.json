@@ -1,6 +1,66 @@
 {
-  "lastUpdated": "2026-03-31T07:04:29Z",
+  "lastUpdated": "2026-03-31T08:35:02Z",
   "items": [
+    {
+      "id": "1518333e70db",
+      "date": "2026-03-31",
+      "title": "CISA orders feds to patch actively exploited Citrix flaw by Thursday",
+      "url": "https://www.bleepingcomputer.com/news/security/cisa-orders-feds-to-patch-actively-exploited-citrix-flaw-by-thursday/",
+      "source": "BleepingComputer",
+      "summary": "The U.S. Cybersecurity and Infrastructure Security Agency (CISA) ordered government agencies to patch their Citrix NetScaler appliances against an actively exploited vulnerability by Thursday. [...]",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/cisa-orders-feds-to-patch-actively-exploited-citrix-flaw-by-thursday/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "95c1de1f930b",
+      "date": "2026-03-31",
+      "title": "Dutch Finance Ministry takes treasury banking portal offline after breach",
+      "url": "https://www.bleepingcomputer.com/news/security/dutch-finance-ministry-takes-treasury-banking-portal-offline-after-breach/",
+      "source": "BleepingComputer",
+      "summary": "The Dutch Ministry of Finance took some of its systems offline, including the digital portal for treasury banking, while investigating a cyberattack detected two weeks ago. [...]",
+      "tags": [
+        "Malware",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "acc39dc5eb77",
       "date": "2026-03-31",
@@ -6183,76 +6243,6 @@
           "name": "Search for requests related to this article URL in web logs (Linux)",
           "language": "bash",
           "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/microsoft/critical-microsoft-sharepoint-flaw-now-exploited-in-attacks/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "4d7a9b1de157",
-      "date": "2026-03-19",
-      "title": "DarkSword iOS Exploit Kit Uses 6 Flaws, 3 Zero-Days for Full Device Takeover",
-      "url": "https://thehackernews.com/2026/03/darksword-ios-exploit-kit-uses-6-flaws.html",
-      "source": "The Hacker News",
-      "summary": "A new exploit kit for Apple iOS devices designed to steal sensitive data from is being wielded by multiple threat actors since at least November 2025, according to reports from Google Threat Intell...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/03/darksword-ios-exploit-kit-uses-6-flaws.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        },
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "1852fd019a4c",
-      "date": "2026-03-18",
-      "title": "New DarkSword iOS exploit used in infostealer attack on iPhones",
-      "url": "https://www.bleepingcomputer.com/news/security/new-darksword-ios-exploit-used-in-infostealer-attack-on-iphones/",
-      "source": "BleepingComputer",
-      "summary": "A new exploit kit for iOS devices and delivery framework dubbed \"Darksword\" has been used to steal a wide range of personal information, including data from cryptocurrency wallet app. [...]",
-      "tags": [
-        "Malware",
-        "Vulnerability"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/new-darksword-ios-exploit-used-in-infostealer-attack-on-iphones/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
         }
       ]
     }
