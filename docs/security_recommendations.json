@@ -1,6 +1,76 @@
 {
-  "lastUpdated": "2026-04-14T11:45:56Z",
+  "lastUpdated": "2026-04-14T14:30:28Z",
   "items": [
+    {
+      "id": "5c251cc9da24",
+      "date": "2026-04-14",
+      "title": "Google Adds Rust-Based DNS Parser into Pixel 10 Modem to Enhance Security",
+      "url": "https://thehackernews.com/2026/04/google-adds-rust-based-dns-parser-into.html",
+      "source": "The Hacker News",
+      "summary": "Google has announced the integration of a Rust-based Domain Name System (DNS) parser into the modem firmware as part of its ongoing efforts to beef up the security of Pixel devices and push memory-...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "3a3b7aad9afa",
+      "date": "2026-04-14",
+      "title": "5 Ways Zero Trust Maximizes Identity Security",
+      "url": "https://www.bleepingcomputer.com/news/security/5-ways-zero-trust-maximizes-identity-security/",
+      "source": "BleepingComputer",
+      "summary": "Stolen credentials remain a top breach vector, often leading to unchecked privilege escalation. Specops explains how identity-first Zero Trust limits access, enforces device trust, and blocks later...",
+      "tags": [
+        "Data breach",
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service.",
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
     {
       "id": "79e00e9517ac",
       "date": "2026-04-14",
@@ -6057,76 +6127,6 @@
         "Windows"
       ],
       "severity": "Medium",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "d65d24e1a33d",
-      "date": "2026-04-01",
-      "title": "LatAm's Self-Taught Cyber Talent Overlooked Amid Cyberattack Glut",
-      "url": "https://www.darkreading.com/remote-workforce/latam-cyber-talent-overlooked-cyberattack-glut",
-      "source": "Dark Reading",
-      "summary": "A newly released study exclusively shared with Dark Reading details the unique circumstances that make up Latin America's labor pool, and why organizations may want to expand their talent search.",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "e778fffb2dec",
-      "date": "2026-04-01",
-      "title": "CERT-UA Impersonation Campaign Spread AGEWHEEZE Malware to 1 Million Emails",
-      "url": "https://thehackernews.com/2026/04/cert-ua-impersonation-campaign-spread.html",
-      "source": "The Hacker News",
-      "summary": "The Computer Emergency Response Team of Ukraine (CERT-UA) has disclosed details of a new phishing campaign in which the cybersecurity agency itself was impersonated to distribute a remote administr...",
-      "tags": [
-        "Phishing",
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
       "recommendations": [
         "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
         "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
