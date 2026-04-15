@@ -1,6 +1,31 @@
 {
-  "lastUpdated": "2026-04-15T17:55:49Z",
+  "lastUpdated": "2026-04-15T18:57:38Z",
   "items": [
+    {
+      "id": "84a27f713f18",
+      "date": "2026-04-15",
+      "title": "Signed software abused to deploy antivirus-killing scripts",
+      "url": "https://www.bleepingcomputer.com/news/security/signed-software-abused-to-deploy-antivirus-killing-scripts/",
+      "source": "BleepingComputer",
+      "summary": "A digitally signed adware tool has deployed payloads running with SYSTEM privileges that disabled antivirus protections on thousands of endpoints, some in the educational, utilities, government, an...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "840f656a2f2b",
       "date": "2026-04-15",
@@ -6043,37 +6068,6 @@
       "recommendations": [
         "Verify whether the impacted service, vendor, or product is used inside your organization.",
         "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "3f63ca26dbf4",
-      "date": "2026-04-03",
-      "title": "CrowdStrike Next-Gen SIEM Can Now Ingest Microsoft Defender Telemetry",
-      "url": "https://www.darkreading.com/endpoint-security/crowdstrike-falcon-ingest-microsoft-defender-telemetry",
-      "source": "Dark Reading",
-      "summary": "Once CrowdStrike’s nemesis, Microsoft is now a collaborator. A shared interest in Formula 1 helped thaw the years-long fierce rivalry.",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
       ],
       "scripts": [
         {
