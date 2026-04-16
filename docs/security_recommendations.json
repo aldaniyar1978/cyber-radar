@@ -1,6 +1,64 @@
 {
-  "lastUpdated": "2026-04-16T06:17:07Z",
+  "lastUpdated": "2026-04-16T08:09:08Z",
   "items": [
+    {
+      "id": "c5a1307589c1",
+      "date": "2026-04-16",
+      "title": "UAC-0247 Targets Ukrainian Clinics and Government in Data-Theft Malware Campaign",
+      "url": "https://thehackernews.com/2026/04/uac-0247-targets-ukrainian-clinics-and.html",
+      "source": "The Hacker News",
+      "summary": "The Computer Emergencies Response Team of Ukraine (CERT-UA)&nbsp;has disclosed details of a new&nbsp;campaign that has&nbsp;targeted governments and municipal healthcare institutions, mainly clinic...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "ICS/OT"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Validate that affected OT components are properly segmented from corporate IT networks.",
+        "Coordinate patching or mitigations with OT engineering teams to avoid impacting safety‑critical processes."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "4c34dbfa3ac5",
+      "date": "2026-04-16",
+      "title": "Microsoft: April Windows Server 2025 update may fail to install",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-april-windows-server-2025-update-may-fail-to-install/",
+      "source": "BleepingComputer",
+      "summary": "Microsoft is investigating an issue causing this month's KB5082063 security update to fail to install on some Windows Server 2025 systems. [...]",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "454fa6751f66",
       "date": "2026-04-16",
@@ -5997,68 +6055,6 @@
         "Validate the integrity and recoverability of recent backups for all critical systems.",
         "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
         "Ensure EDR/XDR coverage and logging are enabled on all high-value assets.",
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "5b2911a311da",
-      "date": "2026-04-03",
-      "title": "Blast Radius of TeamPCP Attacks Expands Amid Hacker Infighting",
-      "url": "https://www.darkreading.com/threat-intelligence/teampcp-attacks-hacker-infighting",
-      "source": "Dark Reading",
-      "summary": "As organizations disclose breaches tied to TeamPCP's supply chain attacks, ShinyHunters and Lapsus$ are getting involved, taking credit, and creating a murky situation for enterprises.",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "91d70b559536",
-      "date": "2026-04-03",
-      "title": "Claude Source Code Leak Highlights Big Supply Chain Missteps",
-      "url": "https://www.darkreading.com/application-security/source-code-leaks-highlight-lack-supply-chain-oversight",
-      "source": "Dark Reading",
-      "summary": "Or, why the software supply chain should be treated as critical infrastructure with guardrails built in at every layer.",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
         "Verify whether the impacted service, vendor, or product is used inside your organization.",
         "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
       ],
