@@ -1,6 +1,32 @@
 {
-  "lastUpdated": "2026-05-12T20:54:19Z",
+  "lastUpdated": "2026-05-12T21:58:47Z",
   "items": [
+    {
+      "id": "41725c646283",
+      "date": "2026-05-12",
+      "title": "It's Patch Tuesday for Microsoft and Not a Zero-Day In Sight",
+      "url": "https://www.darkreading.com/application-security/patch-tuesday-microsoft-zero-day-sight",
+      "source": "Dark Reading",
+      "summary": "It's the first time in two years with no zero-days. But with 137 flaws to patch, including nine critical ones, admins still have plenty of work to do.",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows",
+        "Cloud"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "AWS CLI: basic public S3 bucket exposure check",
+          "language": "bash",
+          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
     {
       "id": "6873795ad0be",
       "date": "2026-05-12",
@@ -6116,32 +6142,6 @@
           "name": "M365: search for suspicious sign‑ins in unified audit log",
           "language": "powershell",
           "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "46e802cb3327",
-      "date": "2026-04-30",
-      "title": "New Linux 'Copy Fail' Vulnerability Enables Root Access on Major Distributions",
-      "url": "https://thehackernews.com/2026/04/new-linux-copy-fail-vulnerability.html",
-      "source": "The Hacker News",
-      "summary": "Cybersecurity researchers have disclosed details of a Linux local privilege escalation (LPE) flaw that could allow an unprivileged local user to obtain root.\nThe high-severity vulnerability tracked...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Linux"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/04/new-linux-copy-fail-vulnerability.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
         }
       ]
     }
