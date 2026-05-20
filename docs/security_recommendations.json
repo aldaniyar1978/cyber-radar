@@ -1,6 +1,123 @@
 {
-  "lastUpdated": "2026-05-20T14:24:28Z",
+  "lastUpdated": "2026-05-20T17:34:53Z",
   "items": [
+    {
+      "id": "726c4adb8383",
+      "date": "2026-05-20",
+      "title": "Microsoft Takes Down Malware-Signing Service Behind Ransomware Attacks",
+      "url": "https://thehackernews.com/2026/05/microsoft-takes-down-malware-signing.html",
+      "source": "The Hacker News",
+      "summary": "Microsoft on Tuesday said it disrupted a malware-signing-as-a-service (MSaaS) operation that weaponized the company's Artifact Signing system to deliver malicious code and conduct ransomware and ot...",
+      "tags": [
+        "Malware",
+        "Ransomware"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Validate the integrity and recoverability of recent backups for all critical systems.",
+        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
+        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets.",
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "e460af860a85",
+      "date": "2026-05-20",
+      "title": "Microsoft Open-Sources RAMPART and Clarity to Secure AI Agents During Development",
+      "url": "https://thehackernews.com/2026/05/microsoft-open-sources-rampart-and.html",
+      "source": "The Hacker News",
+      "summary": "Microsoft has unveiled two new open-source tools called RAMPART and Clarity to assist developers in better testing the security of artificial intelligence (AI) agents.\n\nRAMPART, short for Risk Asse...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "5627ba77db7e",
+      "date": "2026-05-20",
+      "title": "Grafana breach caused by missed token rotation after TanStack attack",
+      "url": "https://www.bleepingcomputer.com/news/security/grafana-breach-caused-by-missed-token-rotation-after-tanstack-attack/",
+      "source": "BleepingComputer",
+      "summary": "The Grafana data breach was caused by a single GitHub workflow token that slipped through the rotation process following the TanStack npm supply-chain attack last week. [...]",
+      "tags": [
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "4196e958e1ba",
+      "date": "2026-05-20",
+      "title": "Patch Now: Critical Flaw in OT Robot OS Gives Attackers Control",
+      "url": "https://www.darkreading.com/ics-ot-security/patch-now-critical-flaw-ot-robot-os",
+      "source": "Dark Reading",
+      "summary": "An unauthenticated attacker can exploit the command injection vulnerability to gain remote access to robotic systems, causing significant disruption to the environment.",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.darkreading.com/ics-ot-security/patch-now-critical-flaw-ot-robot-os\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
     {
       "id": "7f68fb0cc3c8",
       "date": "2026-05-20",
@@ -5811,124 +5928,6 @@
           "name": "Search for requests related to this article URL in web logs (Linux)",
           "language": "bash",
           "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/05/cpanel-whm-patch-3-new-vulnerabilities.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "5d3c373eda4d",
-      "date": "2026-05-08",
-      "title": "ShinyHunters Claims Second Attack Against Instructure",
-      "url": "https://www.darkreading.com/cyberattacks-data-breaches/shinyhunters-second-attack-instructure",
-      "source": "Dark Reading",
-      "summary": "The edtech company is struggling to wrest control from its hackers. PII belonging to hundreds of millions of people is on the line.",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "fd063353c14e",
-      "date": "2026-05-08",
-      "title": "TCLBANKER Banking Trojan Targets Financial Platforms via WhatsApp and Outlook Worms",
-      "url": "https://thehackernews.com/2026/05/tclbanker-banking-trojan-targets.html",
-      "source": "The Hacker News",
-      "summary": "Threat hunters have flagged a previously undocumented Brazilian banking trojan dubbed TCLBANKER that's capable of targeting 59 banking, fintech, and cryptocurrency platforms.\nThe activity is being ...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "b9f3ed8ec865",
-      "date": "2026-05-08",
-      "title": "Fake Call History Apps Stole Payments From Users After 7.3 Million Play Store Downloads",
-      "url": "https://thehackernews.com/2026/05/fake-call-history-apps-stole-payments.html",
-      "source": "The Hacker News",
-      "summary": "Cybersecurity researchers have discovered fraudulent apps on the official Google Play Store for Android that falsely claimed to offer access to call histories for any phone number, only to trick us...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "cfeeeae606ba",
-      "date": "2026-05-08",
-      "title": "NVIDIA confirms GeForce NOW data breach affecting Armenian users",
-      "url": "https://www.bleepingcomputer.com/news/security/nvidia-confirms-geforce-now-data-breach-affecting-armenian-users/",
-      "source": "BleepingComputer",
-      "summary": "NVIDIA has confirmed in a statement for BleepingComputer that GeForce NOW user information has been exposed in a data breach. [...]",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
         }
       ]
     }
