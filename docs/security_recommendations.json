@@ -1,6 +1,32 @@
 {
-  "lastUpdated": "2026-05-23T09:28:49Z",
+  "lastUpdated": "2026-05-23T10:51:05Z",
   "items": [
+    {
+      "id": "ab94028d209f",
+      "date": "2026-05-23",
+      "title": "Laravel-Lang PHP Packages Compromised to Deliver Cross-Platform Credential Stealer",
+      "url": "https://thehackernews.com/2026/05/laravel-lang-php-packages-compromised.html",
+      "source": "The Hacker News",
+      "summary": "Cybersecurity researchers have flagged a fresh software supply chain attack campaign that has targeted multiple PHP packages belonging to  Laravel-Lang to deliver a comprehensive credential-stealin...",
+      "tags": [
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
     {
       "id": "c830ec65403a",
       "date": "2026-05-23",
@@ -5912,32 +5938,6 @@
           "name": "Linux: hunt for suspicious processes and SUID binaries",
           "language": "bash",
           "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "41725c646283",
-      "date": "2026-05-12",
-      "title": "It's Patch Tuesday for Microsoft and Not a Zero-Day In Sight",
-      "url": "https://www.darkreading.com/application-security/patch-tuesday-microsoft-zero-day-sight",
-      "source": "Dark Reading",
-      "summary": "It's the first time in two years with no zero-days. But with 137 flaws to patch, including nine critical ones, admins still have plenty of work to do.",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Windows",
-        "Cloud"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
         }
       ]
     }
