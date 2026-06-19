@@ -1,6 +1,67 @@
 {
-  "lastUpdated": "2026-06-19T18:12:06Z",
+  "lastUpdated": "2026-06-19T20:09:01Z",
   "items": [
+    {
+      "id": "1b968dbc3e2e",
+      "date": "2026-06-19",
+      "title": "Unpatchable 'usbliter8' Exploit Breaks Apple A12 and A13 SecureROM Boot Chain",
+      "url": "https://thehackernews.com/2026/06/unpatchable-usbliter8-exploit-breaks.html",
+      "source": "The Hacker News",
+      "summary": "Security researchers at&nbsp;Paradigm Shift&nbsp;have published a working exploit, dubbed&nbsp;usbliter8, that achieves arbitrary code execution inside the SecureROM of Apple's A12 and A13 chips.\n\n...",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/06/unpatchable-usbliter8-exploit-breaks.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "23d90e32955d",
+      "date": "2026-06-19",
+      "title": "The Gentlemen RaaS Uses GentleKiller EDR Framework Targeting 400 Security Processes",
+      "url": "https://thehackernews.com/2026/06/the-gentlemen-raas-uses-gentlekiller.html",
+      "source": "The Hacker News",
+      "summary": "The Gentlemen ransomware-as-a-service (RaaS) operation is actively developing and maintaining a suite of endpoint detection and response (EDR) killers that it hands out to affiliates for impairing ...",
+      "tags": [
+        "Malware",
+        "Ransomware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Validate the integrity and recoverability of recent backups for all critical systems.",
+        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
+        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets.",
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "c0b7870a02b1",
       "date": "2026-06-19",
@@ -5987,73 +6048,6 @@
           "name": "AWS CLI: basic public S3 bucket exposure check",
           "language": "bash",
           "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "4744cb7f62a1",
-      "date": "2026-06-09",
-      "title": "Miasma Supply Chain Worm Burrows Into 73 Microsoft Repositories",
-      "url": "https://www.darkreading.com/application-security/miasma-supply-chain-worm-73-microsoft-repositories",
-      "source": "Dark Reading",
-      "summary": "The attacks stemmed from a GitHub account that was also compromised in a previous Miasmi attack on Microsoft last month.",
-      "tags": [
-        "Account takeover"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "952db7a21d78",
-      "date": "2026-06-09",
-      "title": "OpenClaw AI agent found falling for phishing attacks, spills user data",
-      "url": "https://www.bleepingcomputer.com/news/security/openclaw-ai-agent-found-falling-for-phishing-attacks-spills-user-data/",
-      "source": "BleepingComputer",
-      "summary": "Phishing simulation on an OpenClaw email agent with various configuration profiles showed that it was susceptible to tactics commonly used to compromise human users. [...]",
-      "tags": [
-        "Phishing",
-        "Malware"
-      ],
-      "tech": [
-        "ICS/OT"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows).",
-        "Validate that affected OT components are properly segmented from corporate IT networks.",
-        "Coordinate patching or mitigations with OT engineering teams to avoid impacting safety‑critical processes."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
         }
       ]
     }
