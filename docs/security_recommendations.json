@@ -1,6 +1,88 @@
 {
-  "lastUpdated": "2026-07-01T11:47:15Z",
+  "lastUpdated": "2026-07-01T13:57:56Z",
   "items": [
+    {
+      "id": "3f30d8829eda",
+      "date": "2026-07-01",
+      "title": "2026 Cybersecurity Assessment: The Gap Between Awareness and Resilience",
+      "url": "https://thehackernews.com/2026/07/2026-cybersecurity-assessment-gap.html",
+      "source": "The Hacker News",
+      "summary": "Organizations have never had greater awareness of cyber risk. Yet turning that awareness into operational resilience has never been more challenging. The 2026 Bitdefender Cybersecurity Assessment c...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "f281f7028105",
+      "date": "2026-07-01",
+      "title": "Over 900 Oracle E-Business instances exposed to ongoing attacks",
+      "url": "https://www.bleepingcomputer.com/news/security/over-900-oracle-e-business-instances-exposed-to-ongoing-attacks/",
+      "source": "BleepingComputer",
+      "summary": "Over 900 Oracle E-Business Suite (EBS) instances have been found exposed online amid ongoing attacks exploiting a critical security flaw. [...]",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/over-900-oracle-e-business-instances-exposed-to-ongoing-attacks/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "5381439c6e64",
+      "date": "2026-07-01",
+      "title": "Safe Events Start With Threat Intel and Digital Security",
+      "url": "https://www.darkreading.com/threat-intelligence/safe-events-threat-intel-digital-security",
+      "source": "Dark Reading",
+      "summary": "Planning ahead to defend against cyber threats is the work that keeps events uneventful.",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "d94c8404cefd",
       "date": "2026-07-01",
@@ -5931,107 +6013,6 @@
       "url": "https://www.darkreading.com/cybersecurity-operations/stressors-ai-changes-cybersecurity-teams",
       "source": "Dark Reading",
       "summary": "As threats proliferate and AI complicates cybersecurity, CISOs say the job is getting harder, but more companies still want cybersecurity expertise, if even on a part-time basis.",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "2fa480ca3550",
-      "date": "2026-06-19",
-      "title": "Salesforce Disables Klue App Integration After OAuth Token Abuse Exposes Customer Data",
-      "url": "https://thehackernews.com/2026/06/salesforce-disables-klue-app.html",
-      "source": "The Hacker News",
-      "summary": "Salesforce has revealed that it disabled the Klue Battlecards app integration within its platform in response to a security incident impacting the competitive intelligence company on June 11, 2026....",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "50bdd773dc4b",
-      "date": "2026-06-19",
-      "title": "Apple Patches Beats Studio Buds Flaw Letting Nearby Attackers Spy via Microphone",
-      "url": "https://thehackernews.com/2026/06/apple-patches-beats-studio-buds-flaw.html",
-      "source": "The Hacker News",
-      "summary": "Apple has updated its Beats Studio Buds wireless earbuds to patch a high-severity vulnerability that could be exploited by nearby hackers to eavesdrop on users.\n\nThe vulnerability, tracked as CVE-2...",
-      "tags": [
-        "Vulnerability",
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/06/apple-patches-beats-studio-buds-flaw.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "65fc00012b97",
-      "date": "2026-06-19",
-      "title": "NY man charged after harassing college student with AI-generated nudes",
-      "url": "https://www.bleepingcomputer.com/news/security/new-york-man-faces-cyberstalking-charge-after-sharing-ai-generated-nudes-online/",
-      "source": "BleepingComputer",
-      "summary": "A New York man faces cyberstalking charges after allegedly sharing AI-generated nude images and fabricated racist messages using fake social media profiles to harass a Georgia college student. [...]",
       "tags": [
         "Malware"
       ],
