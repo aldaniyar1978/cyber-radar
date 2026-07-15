@@ -1,6 +1,129 @@
 {
-  "lastUpdated": "2026-07-15T17:01:42Z",
+  "lastUpdated": "2026-07-15T18:34:08Z",
   "items": [
+    {
+      "id": "3335795ff18c",
+      "date": "2026-07-15",
+      "title": "Google Gemini CLI abused as a hacking agent, malware botnet operator",
+      "url": "https://www.bleepingcomputer.com/news/security/google-gemini-cli-abused-as-a-hacking-agent-malware-botnet-operator/",
+      "source": "BleepingComputer",
+      "summary": "A Russian-speaking threat actor known as \"bandcampro\" used Google's open-source Gemini CLI AI tool as a hacking agent and to operate a small-scale botnet. [...]",
+      "tags": [
+        "Malware",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "bbf79483e134",
+      "date": "2026-07-15",
+      "title": "AsyncAPI npm packages infected with credential-stealing malware",
+      "url": "https://www.bleepingcomputer.com/news/security/-asyncapi-npm-packages-infected-with-credential-stealing-malware/",
+      "source": "BleepingComputer",
+      "summary": "Five malicious versions of AsyncAPI packages were published to the Node Package Manager (npm) in a supply-chain attack that delivered a remote access trojan with info-stealing capabilities. [...]",
+      "tags": [
+        "Malware",
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "a14e71309dea",
+      "date": "2026-07-15",
+      "title": "Guten Tag, Bonjour, Hola to Our European Cyber Defenders!",
+      "url": "https://www.darkreading.com/threat-intelligence/guten-tag-bonjour-hola-european-cyber-defenders",
+      "source": "Dark Reading",
+      "summary": "We're thrilled to unveil the latest evolution of Dark Reading's DR Global section — your go-to source for region-specific cybersecurity intelligence beyond North America.",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "ab8887fa62cb",
+      "date": "2026-07-15",
+      "title": "Is 'Tech-xit' Imminent? UK Steps Up Sovereignty Push Amid AI Strife",
+      "url": "https://www.darkreading.com/cybersecurity-operations/tech-xit-uk-sovereignty-push-amid-ai-strife",
+      "source": "Dark Reading",
+      "summary": "The US government's restrictions on Anthropic and OpenAI frontier models have intensified calls in the UK and other countries to reduce their reliance on US tech companies, with significant cyber i...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "4ddcd8186d49",
       "date": "2026-07-15",
@@ -5826,121 +5949,6 @@
       ],
       "tech": [
         "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "00156109fdb7",
-      "date": "2026-07-06",
-      "title": "CitrixBleed-ing Again? NetScaler Vulnerability Under Attack",
-      "url": "https://www.darkreading.com/vulnerabilities-threats/citrixbleed-ing-again-netscaler-vulnerability-under-attack",
-      "source": "Dark Reading",
-      "summary": "Attackers wasted little time targeting the latest memory disclosure flaw in Citrix's NetScaler products, after researchers published a proof-of-concept exploit (PoC).",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.darkreading.com/vulnerabilities-threats/citrixbleed-ing-again-netscaler-vulnerability-under-attack\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "a3077cd4861e",
-      "date": "2026-07-06",
-      "title": "Iran-Linked Hackers Use New Cavern C2 Framework to Target Israeli Organizations",
-      "url": "https://thehackernews.com/2026/07/iran-linked-hackers-use-new-cavern-c2.html",
-      "source": "The Hacker News",
-      "summary": "An Iranian hacking group affiliated with Iran's Ministry of Intelligence and Security (MOIS) has been wielding a previously undocumented modular command-and-control (C2) framework dubbed Cavern (ak...",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "84fb0e1e14c6",
-      "date": "2026-07-06",
-      "title": "Phishing poses as big-brand job interview to steal Google accounts",
-      "url": "https://www.bleepingcomputer.com/news/security/phishing-poses-as-big-brand-job-interview-to-steal-google-accounts/",
-      "source": "BleepingComputer",
-      "summary": "A phishing campaign is impersonating more than 30 well-known brands, including Adobe, Netflix, Coca-Cola, and OpenAI, in fake job interviews to steal Google account credentials from marketing profe...",
-      "tags": [
-        "Phishing",
-        "Account takeover"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "650523747a40",
-      "date": "2026-07-06",
-      "title": "Fake IT support calls on Microsoft Teams push EtherRAT malware",
-      "url": "https://www.bleepingcomputer.com/news/security/fake-it-support-calls-on-microsoft-teams-push-etherrat-malware/",
-      "source": "BleepingComputer",
-      "summary": "Threat actors are abusing Microsoft Teams voice calls by impersonating corporate IT support staff to trick employees into installing the EtherRAT malware, giving attackers initial access to corpora...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Windows"
       ],
       "severity": "Low",
       "recommendations": [
