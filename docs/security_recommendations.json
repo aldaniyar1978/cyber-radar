@@ -1,6 +1,31 @@
 {
-  "lastUpdated": "2026-07-17T23:38:21Z",
+  "lastUpdated": "2026-07-18T14:11:39Z",
   "items": [
+    {
+      "id": "49b1605f9960",
+      "date": "2026-07-18",
+      "title": "The Future of Age Verification: Your Face Never Leaves Your Device",
+      "url": "https://www.bleepingcomputer.com/news/security/the-future-of-age-verification-your-face-never-leaves-your-device/",
+      "source": "BleepingComputer",
+      "summary": "As age verification laws expand worldwide, organizations face growing pressure to protect users' privacy while meeting regulatory requirements. Incode explains how on-device age estimation verifies...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Cloud"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "AWS CLI: basic public S3 bucket exposure check",
+          "language": "bash",
+          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
     {
       "id": "d31e48891013",
       "date": "2026-07-17",
@@ -5926,39 +5951,6 @@
       "recommendations": [
         "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
         "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "8dee21eed06f",
-      "date": "2026-07-09",
-      "title": "'GodDamn' Ransomware Uses BYOVD to Smite US Companies",
-      "url": "https://www.darkreading.com/cyberattacks-data-breaches/goddamn-ransomware-byovd-smite-companies",
-      "source": "Dark Reading",
-      "summary": "Microsoft co-signed a malicious kernel driver, and now it's being used to kill security software in ransomware attacks.",
-      "tags": [
-        "Ransomware"
-      ],
-      "tech": [
-        "Windows",
-        "Linux"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Validate the integrity and recoverability of recent backups for all critical systems.",
-        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
-        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets."
       ],
       "scripts": [
         {
