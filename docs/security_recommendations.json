@@ -1,6 +1,84 @@
 {
-  "lastUpdated": "2026-07-23T07:24:46Z",
+  "lastUpdated": "2026-07-23T09:42:51Z",
   "items": [
+    {
+      "id": "9d0048cffb64",
+      "date": "2026-07-23",
+      "title": "Check Point Patches Exploited SmartConsole Flaw Allowing Full Admin Access",
+      "url": "https://thehackernews.com/2026/07/check-point-patches-exploited.html",
+      "source": "The Hacker News",
+      "summary": "Check Point has released security updates to address multiple vulnerabilities impacting Security Management and Multi-Domain Management (MDSM) products, including a critical flaw that has come unde...",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/07/check-point-patches-exploited.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "83b02a191ab4",
+      "date": "2026-07-23",
+      "title": "Check Point warns of SmartConsole zero-day exploited in attacks",
+      "url": "https://www.bleepingcomputer.com/news/security/check-point-patches-smartconsole-zero-day-exploited-in-attacks/",
+      "source": "BleepingComputer",
+      "summary": "Israeli cybersecurity firm Check Point Software has addressed an actively exploited zero-day flaw in the company's SmartConsole graphical user interface (GUI) admin panel. [...]",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/check-point-patches-smartconsole-zero-day-exploited-in-attacks/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "bd7f4a71a3f1",
+      "date": "2026-07-23",
+      "title": "Microsoft working to fix Exchange Online mailbox quarantine issue",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-working-to-fix-exchange-online-mailbox-quarantine-issue/",
+      "source": "BleepingComputer",
+      "summary": "Microsoft is working to resolve an ongoing Exchange Online issue that has been mistakenly quarantining customers' mailboxes since Sunday. [...]",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows",
+        "M365"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
     {
       "id": "8e5f97974c9a",
       "date": "2026-07-23",
@@ -5969,81 +6047,6 @@
           "name": "M365: search for suspicious sign‑ins in unified audit log",
           "language": "powershell",
           "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "542358801dc4",
-      "date": "2026-07-14",
-      "title": "Grok Build Uploaded Entire Git Repositories to xAI Storage, Not Just Files It Read",
-      "url": "https://thehackernews.com/2026/07/grok-build-uploads-entire-git.html",
-      "source": "The Hacker News",
-      "summary": "xAI's Grok Build coding CLI was uploading entire Git repositories, full commit history and all, to a Google Cloud Storage bucket run by xAI, not just the files a coding task needed.\n\nA researcher p...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "897428c4ab20",
-      "date": "2026-07-14",
-      "title": "SAP warns of critical flaws in NetWeaver and Commerce Cloud",
-      "url": "https://www.bleepingcomputer.com/news/security/sap-warns-of-critical-flaws-in-netweaver-and-commerce-cloud/",
-      "source": "BleepingComputer",
-      "summary": "SAP has addressed 16 vulnerabilities across multiple products as part of its July 2026 security updates, including three critical flaws in NetWeaver, Commerce Cloud, and AppRouter. [...]",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "62f7daaeaec0",
-      "date": "2026-07-14",
-      "title": "Microsoft starts testing cleaner Windows Search without ads",
-      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-starts-testing-cleaner-windows-search-without-ads/",
-      "source": "BleepingComputer",
-      "summary": "Microsoft is now testing a cleaner and faster version of Windows Search that should prioritize relevant results over ads and promotional content. [...]",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
