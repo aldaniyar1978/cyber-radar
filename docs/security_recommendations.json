@@ -1,6 +1,153 @@
 {
-  "lastUpdated": "2026-08-12T12:35:35Z",
+  "lastUpdated": "2026-08-12T14:09:18Z",
   "items": [
+    {
+      "id": "8fd325a02f14",
+      "date": "2026-08-12",
+      "title": "Walmart Leaders Transform Security Operations Without Going Bananas",
+      "url": "https://www.darkreading.com/cybersecurity-operations/walmart-leaders-transform-security-operations-without-going-bananas",
+      "source": "Dark Reading",
+      "summary": "The big-box giant has scaled its defenses by encouraging trust and innovation. Good communications, transparency and team spirit are key factors.",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "7e54aa1e024c",
+      "date": "2026-08-12",
+      "title": "OpenAI, Anthropic, Google API Flaw Let Weaker AI Models Decode Stronger Models' Reasoning",
+      "url": "https://thehackernews.com/2026/08/openai-anthropic-google-api-flaw-let.html",
+      "source": "The Hacker News",
+      "summary": "A newly disclosed flaw in the way OpenAI, Anthropic, and Google carried hidden AI reasoning between API calls let researchers recover internal reasoning and secrets from session logs, including API...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "876f041f5f60",
+      "date": "2026-08-12",
+      "title": "Enterprise Defenses Recovered at the Edge and Collapsed Inside",
+      "url": "https://thehackernews.com/2026/08/enterprise-defenses-recovered-at-edge.html",
+      "source": "The Hacker News",
+      "summary": "Enterprise defenses are tuned to catch the attacks that make noise. This year's data shows attackers winning by making none.\n\nAccording to Picus Labs' new Blue Report 2026, which measured more than...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "c6d79efd45e4",
+      "date": "2026-08-12",
+      "title": "The Threat Hiding in Your Hiring Process: How Fake Remote Workers Get In",
+      "url": "https://www.bleepingcomputer.com/news/security/the-threat-hiding-in-your-hiring-process-how-fake-remote-workers-get-in/",
+      "source": "BleepingComputer",
+      "summary": "Fake remote workers can exploit gaps between hiring checks, device delivery, and account access to enter organizations under false identities. Specops Software explains how document verification an...",
+      "tags": [
+        "Vulnerability",
+        "Account takeover"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/the-threat-hiding-in-your-hiring-process-how-fake-remote-workers-get-in/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        },
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "97dc85396db6",
+      "date": "2026-08-12",
+      "title": "Ransomware Hits Colombian Justice Ministry Days Before Presidential Transition",
+      "url": "https://www.darkreading.com/cyberattacks-data-breaches/ransomware-hits-colombian-justice-ministry-presidential-transition",
+      "source": "Dark Reading",
+      "summary": "Attackers continue to target critical infrastructure and government-linked organizations in the country, mirroring the increased activity across Latin America.",
+      "tags": [
+        "Ransomware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Validate the integrity and recoverability of recent backups for all critical systems.",
+        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
+        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "281dcb1f3c68",
       "date": "2026-08-12",
@@ -6049,163 +6196,6 @@
           "name": "Generic: search for IOCs from the article across logs",
           "language": "bash",
           "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "26dae549dd6a",
-      "date": "2026-08-01",
-      "title": "Hijacked Hotel Wi-Fi Pushes Fake Updates to Deliver Surveillance Malware",
-      "url": "https://thehackernews.com/2026/08/hijacked-hotel-wi-fi-pushes-fake.html",
-      "source": "The Hacker News",
-      "summary": "A fake browser update served over hijacked hotel Wi-Fi has been used to deliver CornFlake, a remote access trojan (RAT) that can capture webcam images, microphone audio, and keystrokes, Microsoft s...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "af47b2604691",
-      "date": "2026-07-31",
-      "title": "Amgen says cloud data breach exposed patient health, proprietary info",
-      "url": "https://www.bleepingcomputer.com/news/security/amgen-says-cloud-data-breach-exposed-patient-health-proprietary-info/",
-      "source": "BleepingComputer",
-      "summary": "Pharmaceutical company Amgen says it suffered a data breach after threat actors stole corporate data and patient information stored in multiple cloud systems operated by third-party service provide...",
-      "tags": [
-        "Malware",
-        "Data breach"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "42fe86efef20",
-      "date": "2026-07-31",
-      "title": "Arch Linux disables AUR package adoption to stop malware flood",
-      "url": "https://www.bleepingcomputer.com/news/security/arch-linux-disables-aur-package-adoption-to-stop-malware-flood/",
-      "source": "BleepingComputer",
-      "summary": "The Arch Linux project has temporarily disabled adoption of Arch User Repository (AUR) packages after a surge in malicious takeovers of existing packages. [...]",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Linux"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "45d184ea647e",
-      "date": "2026-07-31",
-      "title": "Online ad firm Adform’s script compromised to steal cryptocurrency",
-      "url": "https://www.bleepingcomputer.com/news/security/online-ad-firm-adforms-script-compromised-to-steal-cryptocurrency/",
-      "source": "BleepingComputer",
-      "summary": "Online advertising firm Adform suffered a supply-chain attack that delivered cryptocurrency-stealing scripts to websites using its ad platform, replacing wallet addresses copied to visitors' clipbo...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "c657e127ec3d",
-      "date": "2026-07-31",
-      "title": "Suspected Chinese-Speaking Hackers Target Central Asian Governments With OctLurk and SilkLurk",
-      "url": "https://thehackernews.com/2026/08/suspected-chinese-speaking-hackers.html",
-      "source": "The Hacker News",
-      "summary": "A Chinese-speaking threat actor is suspected to be behind a fresh wave of cyber attacks targeting government organizations mainly located in Central Asia, including Afghanistan, Kyrgyzstan, Tajikis...",
-      "tags": [
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
         }
       ]
     }
