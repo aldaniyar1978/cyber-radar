@@ -1,6 +1,65 @@
 {
-  "lastUpdated": "2026-08-13T12:36:23Z",
+  "lastUpdated": "2026-08-13T14:10:45Z",
   "items": [
+    {
+      "id": "19708fe05197",
+      "date": "2026-08-13",
+      "title": "Who Vets AI’s Code? The Scale Challenge Facing Open Source Ingestion",
+      "url": "https://www.bleepingcomputer.com/news/security/who-vets-ais-code-the-scale-challenge-facing-open-source-ingestion/",
+      "source": "BleepingComputer",
+      "summary": "AI coding tools can introduce unvetted or hallucinated open source dependencies faster than traditional security reviews can keep pace. ActiveState explains why organizations should govern packages...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "e8c30c5d8aef",
+      "date": "2026-08-13",
+      "title": "White House taps security firms for offensive hack-back operations",
+      "url": "https://www.bleepingcomputer.com/news/security/white-house-taps-security-firms-for-offensive-hack-back-operations/",
+      "source": "BleepingComputer",
+      "summary": "A new White House memo signed by U.S. President Donald Trump instructs the National Coordination Center (NCC) to establish a program that would allow private security companies to apply for approva...",
+      "tags": [
+        "Malware",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "166d8f8c1fb6",
       "date": "2026-08-13",
@@ -6161,56 +6220,6 @@
           "name": "Search for requests related to this article URL in web logs (Linux)",
           "language": "bash",
           "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/n-able-warns-of-n-central-auth-bypass-flaw-exploited-in-attacks/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "a939af7e8489",
-      "date": "2026-08-03",
-      "title": "Chinese Actor Weaponizes Deepseek AI Agent to Attack Security Firm",
-      "url": "https://www.darkreading.com/cyberattacks-data-breaches/chinese-actor-deepseek-ai-agent-attack-security-firm",
-      "source": "Dark Reading",
-      "summary": "Researchers from Jesta intercepted and investigated the model, which was attempting to compromise more than 1,200 hosts for proxyjacking and to launch further attacks",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "9fd432b53400",
-      "date": "2026-08-03",
-      "title": "⚡ Weekly Recap: Rogue AI Models, $88M Bitcoin Theft, Water-System Attacks and Dangling DNS Hijacks",
-      "url": "https://thehackernews.com/2026/08/weekly-recap-rogue-ai-models-88m.html",
-      "source": "The Hacker News",
-      "summary": "This week kept coming back to permission. A model crossed a boundary. A wallet trusted bad randomness. Webmail kept an intruder around. Public systems, package feeds, hotel networks, and login flow...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
