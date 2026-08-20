@@ -1,6 +1,156 @@
 {
-  "lastUpdated": "2026-08-20T10:15:30Z",
+  "lastUpdated": "2026-08-20T11:13:19Z",
   "items": [
+    {
+      "id": "e9a9b4bcb26d",
+      "date": "2026-08-20",
+      "title": "NASA AIT-GUI Flaws Could Let Unauthenticated Attackers Issue Spacecraft Commands",
+      "url": "https://thehackernews.com/2026/08/nasa-ait-gui-flaws-could-let.html",
+      "source": "The Hacker News",
+      "summary": "Security researchers at Cycode have disclosed a chain of flaws in AIT-GUI, the browser-based operator console for NASA/JPL's open-source AMMOS Instrument Toolkit, that allow an unauthenticated atta...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Cloud"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "AWS CLI: basic public S3 bucket exposure check",
+          "language": "bash",
+          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "edbf6e95ef79",
+      "date": "2026-08-20",
+      "title": "ToxicPanda 2.0 and GoldDigger Expand Android Banking Attacks with On-Device Fraud",
+      "url": "https://thehackernews.com/2026/08/toxicpanda-20-and-golddigger-expand.html",
+      "source": "The Hacker News",
+      "summary": "Cybersecurity researchers have shed light on an updated version of ToxicPanda (aka TgToxic) that comes with \"significant enhancements,\" including a set of 167 remote commands and expands its target...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "81e9e00833c6",
+      "date": "2026-08-20",
+      "title": "40 Malicious Firefox Extensions Pose as Web3 Products to Steal Wallet Secrets",
+      "url": "https://thehackernews.com/2026/08/40-malicious-firefox-extensions-pose-as.html",
+      "source": "The Hacker News",
+      "summary": "A set of 40 Mozilla Firefox extensions has been found to engage in cryptocurrency wallet theft by masquerading as OKX, Rabby Wallet, TronLink, and other Web3 products.\n\nAccording to the Socket Thre...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "451b6899ead5",
+      "date": "2026-08-20",
+      "title": "CISA warns of hackers exploiting critical MLflow vulnerability",
+      "url": "https://www.bleepingcomputer.com/news/security/cisa-warns-of-hackers-exploiting-critical-mlflow-vulnerability/",
+      "source": "BleepingComputer",
+      "summary": "The Cybersecurity and Infrastructure Security Agency (CISA) warned federal agencies that threat actors are now exploiting a critical vulnerability in the MLflow open-source AI engineering platform....",
+      "tags": [
+        "Vulnerability",
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/cisa-warns-of-hackers-exploiting-critical-mlflow-vulnerability/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "89894555241f",
+      "date": "2026-08-19",
+      "title": "Agentic AI Presents New Insider Threat Model for Orgs",
+      "url": "https://www.darkreading.com/cyberattacks-data-breaches/agentic-ai-new-insider-threat-model",
+      "source": "Dark Reading",
+      "summary": "Katie Moussouris of Luta Security talks with the Dark Reading News Desk about how enterprises will now need to monitor risks posed by their own agents in the wake of the recent Hugging Face attack.",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "802e0b8e538e",
       "date": "2026-08-20",
@@ -6156,146 +6306,6 @@
           "name": "M365: search for suspicious sign‑ins in unified audit log",
           "language": "powershell",
           "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "6b67ce4b45f0",
-      "date": "2026-08-10",
-      "title": "Shipping 10–50× More Code? Watch This Webinar on Securing AI-Speed Development",
-      "url": "https://thehackernews.com/2026/08/shipping-1050-more-code-watch-this.html",
-      "source": "The Hacker News",
-      "summary": "AI is helping development teams produce far more code, far faster. But security teams still have to review vulnerabilities, manage dependencies, prioritize fixes, and control risk at human speed.\n\n...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "25cf8f2b5607",
-      "date": "2026-08-10",
-      "title": "TrueConf Server Flaws Exploited to Replace Client Installers with PhantomCore",
-      "url": "https://thehackernews.com/2026/08/head-mare-exploits-trueconf-flaws-to.html",
-      "source": "The Hacker News",
-      "summary": "The threat actor known as Head Mare has been observed weaponizing security flaws in unpatched TrueConf servers once again in attacks targeting Russian companies spanning instrumentation, electronic...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/08/head-mare-exploits-trueconf-flaws-to.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        },
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "868becf68b76",
-      "date": "2026-08-10",
-      "title": "Member of The Com sent to prison for blackmail, sextortion",
-      "url": "https://www.bleepingcomputer.com/news/security/member-of-the-com-sent-to-prison-for-blackmail-sextortion/",
-      "source": "BleepingComputer",
-      "summary": "A member of \"The Com,\" a loose-knit online cybercrime collective that targets children and teenagers, has been sentenced to two years in prison for blackmail and sextortion offenses against nearly ...",
-      "tags": [
-        "Ransomware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Validate the integrity and recoverability of recent backups for all critical systems.",
-        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
-        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "f28651eb8e17",
-      "date": "2026-08-10",
-      "title": "When Credentials Are No Longer Enough: Device Trust in the AI Era",
-      "url": "https://www.bleepingcomputer.com/news/security/when-credentials-are-no-longer-enough-device-trust-in-the-ai-era/",
-      "source": "BleepingComputer",
-      "summary": "AI is making phishing, credential theft, and social engineering faster and more efficient, while traditional trust signals such as passwords, MFA, IP reputation, and geolocation become easier to by...",
-      "tags": [
-        "Phishing",
-        "Account takeover"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "0948527eda02",
-      "date": "2026-08-10",
-      "title": "LexisNexis shuts down services after suspicious activity on servers",
-      "url": "https://www.bleepingcomputer.com/news/security/lexisnexis-shuts-down-services-after-suspicious-activity-on-servers/",
-      "source": "BleepingComputer",
-      "summary": "LexisNexis took its Diligence, Metabase API, and Newsdesk services offline as part of its response to unusual activity on servers hosted and managed by an unnamed third-party vendor. [...]",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
