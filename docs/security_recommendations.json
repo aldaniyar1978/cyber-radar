@@ -1,6 +1,31 @@
 {
-  "lastUpdated": "2026-08-21T16:56:17Z",
+  "lastUpdated": "2026-08-21T17:51:04Z",
   "items": [
+    {
+      "id": "dc1b5b432315",
+      "date": "2026-08-21",
+      "title": "OWASP Flags Top AI Skill Risks in New Security Blueprint",
+      "url": "https://www.darkreading.com/application-security/owasp-flags-top-ai-skill-risks-security-blueprint",
+      "source": "Dark Reading",
+      "summary": "The Open Worldwide Application Security Project has a brand-new top 10 security list tailored for the modern era, and it debuts a Universal Skill Format to add consistency and security to the AI ad...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "8c1e20a67309",
       "date": "2026-08-21",
@@ -6186,37 +6211,6 @@
           "name": "Search for requests related to this article URL in web logs (Linux)",
           "language": "bash",
           "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/cisco-warns-of-asa-and-ftd-vpn-flaw-exploited-to-crash-devices/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "8d78566c0f23",
-      "date": "2026-08-11",
-      "title": "Sandworm-Linked UAC-0145 Uses Fake Job Interviews to Push VPN That Can Run Commands",
-      "url": "https://thehackernews.com/2026/08/sandworm-linked-uac-0145-uses-fake-job.html",
-      "source": "The Hacker News",
-      "summary": "The Computer Emergency Response Team of Ukraine (CERT-UA) has disclosed details of a new social engineering campaign orchestrated by Russian nation-state threat actors targeting IT workers in the c...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
         }
       ]
     }
