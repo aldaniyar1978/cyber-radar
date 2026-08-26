@@ -1,6 +1,158 @@
 {
-  "lastUpdated": "2026-08-26T14:09:54Z",
+  "lastUpdated": "2026-08-26T15:55:48Z",
   "items": [
+    {
+      "id": "d8180f6e8526",
+      "date": "2026-08-26",
+      "title": "NovaCookies Campaigns Abuse Genuine Docusign Notifications to Steal Microsoft 365 Sessions",
+      "url": "https://thehackernews.com/2026/08/novacookies-campaigns-abuse-genuine.html",
+      "source": "The Hacker News",
+      "summary": "Cybersecurity researchers have disclosed details of a new adversary-in-the-middle (AitM) phishing toolkit called NovaCookies that's used as a proxy to redirect Microsoft 365 sign-ins, while capturi...",
+      "tags": [
+        "Phishing"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "b521e9456ab4",
+      "date": "2026-08-26",
+      "title": "CISA Red Team Compromised Two Critical Infrastructure Orgs, One Detected Nothing",
+      "url": "https://thehackernews.com/2026/08/cisa-red-team-compromised-two-critical.html",
+      "source": "The Hacker News",
+      "summary": "The U.S. Cybersecurity and Infrastructure Security Agency (CISA) has published the results of two red team assessments it conducted simultaneously against two critical infrastructure organizations,...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "8a3ef8a8eff5",
+      "date": "2026-08-26",
+      "title": "Boston Scientific says cyberattack disrupted operations globally",
+      "url": "https://www.bleepingcomputer.com/news/security/boston-scientific-says-cyberattack-disrupted-operations-globally/",
+      "source": "BleepingComputer",
+      "summary": "Medical technology company Boston Scientific has been targeted in a cyberattack that disrupted some of its IT systems, causing operational disruptions globally. [...]",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "24e5a7c8fd77",
+      "date": "2026-08-26",
+      "title": "Hackers target Microsoft SharePoint RCE chain with PoC exploit",
+      "url": "https://www.bleepingcomputer.com/news/security/hackers-target-microsoft-sharepoint-rce-chain-with-poc-exploit/",
+      "source": "BleepingComputer",
+      "summary": "Attackers are now targeting a chain of two Microsoft SharePoint vulnerabilities that can allow them to execute arbitrary code on unpatched servers, according to threat intelligence company Defused....",
+      "tags": [
+        "Vulnerability",
+        "Data breach"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/hackers-target-microsoft-sharepoint-rce-chain-with-poc-exploit/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "7db97418b6be",
+      "date": "2026-08-26",
+      "title": "FBI disrupts proxy network enabling Chinese espionage operations",
+      "url": "https://www.bleepingcomputer.com/news/security/fbi-disrupts-proxy-network-enabling-chinese-espionage-operations/",
+      "source": "BleepingComputer",
+      "summary": "The FBI has disrupted infrastructure associated with a technical \"quartermaster\" that provided reconnaissance, proxy management, and operational routing capabilities for Chinese cyber espionage act...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "bdb4c8eb72cb",
       "date": "2026-08-26",
@@ -6012,144 +6164,6 @@
       "recommendations": [
         "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
         "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "6280c9feda47",
-      "date": "2026-08-14",
-      "title": "Mustang Panda Adds Signed Windows Rootkit to CoolClient Backdoor for Stealth",
-      "url": "https://thehackernews.com/2026/08/mustang-panda-adds-signed-windows.html",
-      "source": "The Hacker News",
-      "summary": "The threat actor known as HoneyMyte (aka&nbsp;Mustang Panda) has been observed deploying an updated version of the CoolClient backdoor with a signed Windows kernel-mode rootkit that can hide and pr...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Windows",
-        "Linux"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "d204cf343232",
-      "date": "2026-08-14",
-      "title": "Chrome DevTools Technique Enables Authenticated Session Hijacking in Live Windows Browsers",
-      "url": "https://thehackernews.com/2026/08/chrome-devtools-technique-enables.html",
-      "source": "The Hacker News",
-      "summary": "Cybersecurity researchers have detailed a post-exploitation technique that enables the&nbsp;Chrome DevTools Protocol (CDP)&nbsp;inside a running Google Chrome or Microsoft Edge process on Windows, ...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/08/chrome-devtools-technique-enables.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "a46505b4e6fb",
-      "date": "2026-08-14",
-      "title": "CTM360 Uncovers Over 3,000 Recruitment Phishing URLs Using Browser-in-the-Browser (BitB) Credential Traps",
-      "url": "https://thehackernews.com/2026/08/ctm360-uncovers-over-3000-recruitment.html",
-      "source": "The Hacker News",
-      "summary": "Cybersecurity researchers have uncovered a large-scale, global recruitment-themed phishing campaign that uses fake interview scheduling pages and Browser-in-the-Browser (BitB) windows to steal Goog...",
-      "tags": [
-        "Phishing",
-        "Account takeover"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "847fdba93067",
-      "date": "2026-08-14",
-      "title": "Apple Warns Users in 110 Countries They May Be Targets of Mercenary Spyware",
-      "url": "https://thehackernews.com/2026/08/apple-warns-users-in-110-countries-they.html",
-      "source": "The Hacker News",
-      "summary": "Apple on Thursday sent a fresh batch of notifications to customers whom it suspects may have been targeted by mercenary spyware attacks.\n\nIn a statement shared with TechCrunch, the iPhone maker sai...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "5795af3dea0d",
-      "date": "2026-08-17",
-      "title": "French tax authority data breach affects 678,000 individuals",
-      "url": "https://www.bleepingcomputer.com/news/security/french-tax-authority-data-breach-affects-678-000-individuals/",
-      "source": "BleepingComputer",
-      "summary": "The French Ministry of the Economy and Finance has disclosed a data breach after an attacker accessed the General Directorate of Public Finances (DGFiP) systems and stole data belonging to 678,000 ...",
-      "tags": [
-        "Malware",
-        "Data breach"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
       ],
       "scripts": [
         {
