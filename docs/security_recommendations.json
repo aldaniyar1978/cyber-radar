@@ -1,6 +1,62 @@
 {
-  "lastUpdated": "2026-09-11T11:51:16Z",
+  "lastUpdated": "2026-09-11T15:17:03Z",
   "items": [
+    {
+      "id": "5c28c5e3c7e1",
+      "date": "2026-09-11",
+      "title": "Your Critical Vulnerabilities Might Not Be Your Biggest Risk",
+      "url": "https://thehackernews.com/2026/09/your-critical-vulnerabilities-might-not.html",
+      "source": "The Hacker News",
+      "summary": "Security teams have become exceptionally talented at finding vulnerabilities. Now, it’s time to turn our attention to optimizing the process for determining which of those vulnerabilities actually ...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "e7bb42fd587f",
+      "date": "2026-09-11",
+      "title": "How Threat Actors Are Turning Trusted AI Platforms Into an Attack Surface",
+      "url": "https://www.bleepingcomputer.com/news/security/how-threat-actors-are-turning-trusted-ai-platforms-into-an-attack-surface/",
+      "source": "BleepingComputer",
+      "summary": "Threat actors are abusing trusted AI platforms to host malicious content, poison search results, and trick users into installing malware. Huntress examines campaigns targeting AI users through weap...",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "5b917d454e23",
       "date": "2026-09-11",
@@ -6040,58 +6096,6 @@
           "name": "Linux: hunt for suspicious processes and SUID binaries",
           "language": "bash",
           "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "d55adbc37a02",
-      "date": "2026-09-01",
-      "title": "Critical Langflow Flaw Exploited as Attacks on AI Platform Rise",
-      "url": "https://www.darkreading.com/vulnerabilities-threats/critical-langflow-flaw-exploited-attacks-rise",
-      "source": "Dark Reading",
-      "summary": "The attacks targeting CVE-2026-0768 are the latest threat against the low-code AI development platform, which is receiving more attention from adversaries this year.",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.darkreading.com/vulnerabilities-threats/critical-langflow-flaw-exploited-attacks-rise\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "0e32bbb3f0da",
-      "date": "2026-09-01",
-      "title": "AI Model Evaluator METR Hit by Credential Theft, Probing",
-      "url": "https://www.darkreading.com/identity-access-management-security/ai-model-evaluator-metr-credential-theft-probing",
-      "source": "Dark Reading",
-      "summary": "In one attack, threat actors stole an API key that ultimately led to the consumption of $600,000 in public AI model credits for the security nonprofit.",
-      "tags": [
-        "Account takeover"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
         }
       ]
     }
