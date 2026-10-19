@@ -1,6 +1,171 @@
 {
-  "lastUpdated": "2026-10-19T20:00:38Z",
+  "lastUpdated": "2026-10-19T23:48:29Z",
   "items": [
+    {
+      "id": "06828b6824de",
+      "date": "2026-10-19",
+      "title": "Nikkei discloses third data breach in a month, 1.8M records exposed",
+      "url": "https://www.bleepingcomputer.com/news/security/nikkei-discloses-third-data-breach-in-a-month-18m-records-exposed/",
+      "source": "BleepingComputer",
+      "summary": "Nikkei Inc. disclosed a new data breach, the third in about a month, that exposed 1.83 million personal information records. [...]",
+      "tags": [
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "ad4bee270cfb",
+      "date": "2026-10-19",
+      "title": "WordPress SEO plugin Rank Math compromised to backdoor websites",
+      "url": "https://www.bleepingcomputer.com/news/security/wordpress-seo-plugin-rank-math-compromised-to-backdoor-websites/",
+      "source": "BleepingComputer",
+      "summary": "Some downloads of the Rank Math PRO WordPress plugin from the vendor's official website carried malware that planted hidden backdoors in a supply-chain attack last week. [...]",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "d3c4d3f4b694",
+      "date": "2026-10-19",
+      "title": "Researchers Infiltrate Microsoft Tech Support Scam Operation",
+      "url": "https://www.darkreading.com/threat-intelligence/microsoft-tech-support-scam-operation",
+      "source": "Dark Reading",
+      "summary": "A large-scale scam operation impersonating Microsoft uses a malicious traffic distribution system (TDS) run by a Russian organization and abuses thousands of Cloudflare links.",
+      "tags": [
+        "Phishing",
+        "Malware"
+      ],
+      "tech": [
+        "Windows",
+        "Cloud"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "AWS CLI: basic public S3 bucket exposure check",
+          "language": "bash",
+          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        },
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "83abc48f2a67",
+      "date": "2026-10-19",
+      "title": "'AdFection' Turns Ad Impressions Into Zero-Click Spyware Delivery",
+      "url": "https://www.darkreading.com/data-privacy/adfection-online-ads-spyware-delivery",
+      "source": "Dark Reading",
+      "summary": "Spyware vendors are exploiting targeted ad bidding in the digital ecosystem to identify and track individuals and organizations of interest.",
+      "tags": [
+        "Vulnerability"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.darkreading.com/data-privacy/adfection-online-ads-spyware-delivery\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        }
+      ]
+    },
+    {
+      "id": "a1e72a5257aa",
+      "date": "2026-10-19",
+      "title": "ConnectWise Disables Cloud Backups Amid Concerns for Downstream MSPs",
+      "url": "https://www.darkreading.com/identity-access-management-security/connectwise-disables-cloud-backups-downstream-msps",
+      "source": "Dark Reading",
+      "summary": "Researchers say attackers authenticated into Microsoft 365 tenants using ConnectWise credentials; ConnectWise says customer impact remains unconfirmed.",
+      "tags": [
+        "Account takeover"
+      ],
+      "tech": [
+        "Windows",
+        "Cloud"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "AWS CLI: basic public S3 bucket exposure check",
+          "language": "bash",
+          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        },
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
     {
       "id": "9d4c9ec350df",
       "date": "2026-10-19",
@@ -5757,174 +5922,6 @@
           "name": "Linux: hunt for suspicious processes and SUID binaries",
           "language": "bash",
           "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "4dee2f15ee23",
-      "date": "2026-10-08",
-      "title": "ARTEX AI Pentesting Tool Used in Data Theft Attacks on South Korean Financial Firms",
-      "url": "https://thehackernews.com/2026/10/artex-ai-pentesting-tool-used-in-data.html",
-      "source": "The Hacker News",
-      "summary": "Cybersecurity researchers have disclosed details of a targeted campaign aimed at South Korean financial organizations that used an artificial intelligence (AI) pen testing tool named ARTEX to carry...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "9a901b83fbc5",
-      "date": "2026-10-08",
-      "title": "Ransomware attack disrupts Japan's IDCF Cloud used by govt clients",
-      "url": "https://www.bleepingcomputer.com/news/security/ransomware-attack-disrupts-japans-idcf-cloud-used-by-govt-clients/",
-      "source": "BleepingComputer",
-      "summary": "IDC Frontier, a major Japanese cloud and digital infrastructure company, disclosed that its IDCF Cloud service was targeted in a ransomware attack that caused an outage at a data center cluster ser...",
-      "tags": [
-        "Ransomware"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Validate the integrity and recoverability of recent backups for all critical systems.",
-        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
-        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "80d58ea18aa5",
-      "date": "2026-10-08",
-      "title": "Low-cost Android phones ship with residential proxy malware",
-      "url": "https://www.bleepingcomputer.com/news/security/low-cost-android-phones-ship-with-residential-proxy-malware/",
-      "source": "BleepingComputer",
-      "summary": "A malware campaign dubbed 'Midnight Mimosa' has been discovered on low-cost Android smartphones that ship with malicious software embedded in their firmware, allowing attackers to silently install ...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "a2fe45303716",
-      "date": "2026-10-08",
-      "title": "FakeGit malware campaign returns with 17,610 malicious GitHub repos",
-      "url": "https://www.bleepingcomputer.com/news/security/fakegit-malware-campaign-returns-with-17-610-malicious-github-repos/",
-      "source": "BleepingComputer",
-      "summary": "More than 17,000 fake repositories on GitHub are distributing the SmartLoader malware after the FakeGit campaign reactivated earlier this month to push the StealC infostealer. [...]",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "c93541a7d1a3",
-      "date": "2026-10-08",
-      "title": "Cisco warns of critical flaws allowing Nexus switch takeover",
-      "url": "https://www.bleepingcomputer.com/news/security/cisco-warns-of-critical-flaws-allowing-nexus-switch-takeover/",
-      "source": "BleepingComputer",
-      "summary": "Cisco released security advisories for five critical vulnerabilities in its NX-OS data center network operating system that could be exploited to run arbitrary code with root privileges on Nexus sw...",
-      "tags": [
-        "Malware",
-        "Vulnerability"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.bleepingcomputer.com/news/security/cisco-warns-of-critical-flaws-allowing-nexus-switch-takeover/\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        },
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
         }
       ]
     }
