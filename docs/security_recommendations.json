@@ -1,6 +1,62 @@
 {
-  "lastUpdated": "2026-10-21T00:11:16Z",
+  "lastUpdated": "2026-10-21T05:01:59Z",
   "items": [
+    {
+      "id": "47d2c677e7e0",
+      "date": "2026-10-21",
+      "title": "Stolen UpdraftCentral keys used to backdoor WordPress sites",
+      "url": "https://www.bleepingcomputer.com/news/security/stolen-updraftcentral-keys-used-to-backdoor-wordpress-sites/",
+      "source": "BleepingComputer",
+      "summary": "A threat actor breached TeamUpdraft's website, a developer of popular WordPress backup and security plugins, potentially compromising UpdraftCentral connection keys that can send commands to connec...",
+      "tags": [
+        "Data breach"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "a5ca1ad2a05d",
+      "date": "2026-10-21",
+      "title": "Mozilla, Google, Apple block compromised eMudhra CA certificates",
+      "url": "https://www.bleepingcomputer.com/news/security/mozilla-google-apple-block-compromised-emudhra-ca-certificates/",
+      "source": "BleepingComputer",
+      "summary": "Certificate authority eMudhra revoked eight compromised intermediate certificates after researchers found their private keys were so weak that anyone could recover them almost instantly and use the...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "0f7aef6e680c",
       "date": "2026-10-20",
@@ -5916,57 +5972,6 @@
           "name": "Linux: hunt for suspicious processes and SUID binaries",
           "language": "bash",
           "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "a710e4bbafed",
-      "date": "2026-10-09",
-      "title": "P7 DarkSword iOS Exploit Kit Adds Crypto Wallet Data Theft and Remote Commands",
-      "url": "https://thehackernews.com/2026/10/p7-darksword-ios-exploit-kit-adds.html",
-      "source": "The Hacker News",
-      "summary": "Cybersecurity researchers have disclosed details of a previously unseen variant of the DarkSword iOS exploit kit called P7 DarkSword.\n\n\"Compared with the variants we usually observe, P7 reduces its...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/10/p7-darksword-ios-exploit-kit-adds.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "ac752bd4a52c",
-      "date": "2026-10-09",
-      "title": "TP-Link Sued by Four More U.S. States Over Router Security and China Ties",
-      "url": "https://thehackernews.com/2026/10/tp-link-sued-by-four-more-us-states.html",
-      "source": "The Hacker News",
-      "summary": "Four more U.S. states sued router maker TP-Link Systems on October 6, bringing the total to five, with &nbsp;Texas filing a suit in February. Florida, Iowa, Montana and Nebraska allege the Californ...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
