@@ -1,6 +1,242 @@
 {
-  "lastUpdated": "2026-10-23T15:56:42Z",
+  "lastUpdated": "2026-10-23T19:38:14Z",
   "items": [
+    {
+      "id": "4206f2b13889",
+      "date": "2026-10-23",
+      "title": "BlackX UEFI Bootkit Bypasses Secure Boot on Patched Windows Systems Missing Revocations",
+      "url": "https://thehackernews.com/2026/10/blackx-uefi-bootkit-bypasses-secure.html",
+      "source": "The Hacker News",
+      "summary": "Diplomatic organizations in Central Asia have been targeted by a sophisticated new Unified Extensible Firmware Interface (UEFI) bootkit called BlackX.\n\nThe activity, which singled out diplomatic en...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "041fbf5d440d",
+      "date": "2026-10-23",
+      "title": "Ruby Fixes Three Regex Engine Bugs Responsible for Four Critical GitLab RCE Flaws",
+      "url": "https://thehackernews.com/2026/10/ruby-fixes-three-regex-engine-bugs.html",
+      "source": "The Hacker News",
+      "summary": "Ruby has released versions 4.0.9, 3.4.12, and 3.3.13 to fix three bugs in Onigmo, the regular expression engine built into the language. The bugs lie behind four critical security flaws that GitLab...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Cloud"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "AWS CLI: basic public S3 bucket exposure check",
+          "language": "bash",
+          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "93f9a5143171",
+      "date": "2026-10-23",
+      "title": "Exposed Infrastructure Reveals How Ransomware Affiliates Used AI Agents to Execute Intrusions",
+      "url": "https://thehackernews.com/2026/10/exposed-infrastructure-reveals-how.html",
+      "source": "The Hacker News",
+      "summary": "Cybersecurity researchers have discovered an artificial intelligence (AI)-driven intrusion ecosystem run by affiliates of the INC and The Gentlemen ransomware groups.\n\nCentral to the operation is a...",
+      "tags": [
+        "Malware",
+        "Ransomware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Validate the integrity and recoverability of recent backups for all critical systems.",
+        "Review exposed RDP/VPN entry points and restrict access using MFA and network segmentation.",
+        "Ensure EDR/XDR coverage and logging are enabled on all high-value assets.",
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "f54d5b7fccf9",
+      "date": "2026-10-23",
+      "title": "Russia-Linked Hackers Used New Mesh Network Backdoor in Destructive Ukraine Attack",
+      "url": "https://thehackernews.com/2026/10/russian-linked-hackers-used-new-mesh.html",
+      "source": "The Hacker News",
+      "summary": "The Russian state-sponsored hacking group Sandworm teamed up with another threat actor to carry out a destructive wiping attack targeting a Ukrainian logistics company last year.\n\nAccording to ESET...",
+      "tags": [
+        "Data breach"
+      ],
+      "tech": [
+        "ICS/OT"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service.",
+        "Validate that affected OT components are properly segmented from corporate IT networks.",
+        "Coordinate patching or mitigations with OT engineering teams to avoid impacting safety‑critical processes."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "bb92d24a5d66",
+      "date": "2026-10-23",
+      "title": "Microsoft Teams to get AI-powered, context-aware phishing detection",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-teams-to-get-ai-powered-context-aware-phishing-detection/",
+      "source": "BleepingComputer",
+      "summary": "Microsoft has announced plans to add AI-powered phishing detection to Teams messages starting in early November 2026. [...]",
+      "tags": [
+        "Phishing"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
+        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
+      ],
+      "scripts": [
+        {
+          "name": "M365: search for suspicious sign‑ins in unified audit log",
+          "language": "powershell",
+          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
+        }
+      ]
+    },
+    {
+      "id": "7ed908713ee8",
+      "date": "2026-10-23",
+      "title": "Microsoft: Windows Server 2016 reaches end of support in January",
+      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-windows-server-2016-reaches-end-of-support-in-january/",
+      "source": "BleepingComputer",
+      "summary": "Microsoft says Windows Server 2016 will stop receiving security updates after it reaches the end of support in January 2027. [...]",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Windows"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "770a09c4f446",
+      "date": "2026-10-23",
+      "title": "Quest Diagnostics confirms data breach exposed patient records",
+      "url": "https://www.bleepingcomputer.com/news/security/quest-diagnostics-confirms-data-breach-exposed-patient-records/",
+      "source": "BleepingComputer",
+      "summary": "American clinical laboratory company Quest Diagnostics disclosed that patient records have been exposed after a threat actor gained unauthorized access to its Quanum LSM system. [...]",
+      "tags": [
+        "Malware",
+        "Data breach"
+      ],
+      "tech": [
+        "ICS/OT"
+      ],
+      "severity": "High",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Verify whether the impacted service, vendor, or product is used inside your organization.",
+        "Assess the need to rotate passwords, keys, and tokens associated with the affected service.",
+        "Validate that affected OT components are properly segmented from corporate IT networks.",
+        "Coordinate patching or mitigations with OT engineering teams to avoid impacting safety‑critical processes."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    {
+      "id": "de3906cf2090",
+      "date": "2026-10-23",
+      "title": "AI Tools Are Generating Massive Attacks for Little Cost",
+      "url": "https://www.darkreading.com/cybersecurity-operations/ai-tools-massive-attacks-little-cost",
+      "source": "Dark Reading",
+      "summary": "One campaign targets 105 sites using open-weight models; in another, public models gained full domain control for $12. Cyber-defense will have to change.",
+      "tags": [
+        "Malware"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        }
+      ]
+    },
     {
       "id": "54d19c44116f",
       "date": "2026-10-23",
@@ -5909,256 +6145,6 @@
           "name": "Search for requests related to this article URL in web logs (Linux)",
           "language": "bash",
           "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/10/cisco-warns-of-active-attacks.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "e1dd6a4db475",
-      "date": "2026-10-14",
-      "title": "Hackers Backdoor Nextcloud Servers Through Critical Flaw in Collabora’s Built-in CODE App",
-      "url": "https://thehackernews.com/2026/10/hackers-backdoor-nextcloud-servers.html",
-      "source": "The Hacker News",
-      "summary": "Attackers exploited a flaw in an optional Nextcloud app,&nbsp;Collabora Online - Built-in CODE Server, to plant web shells on Nextcloud servers. Three administrators&nbsp;reported the issue on GitH...",
-      "tags": [
-        "Malware",
-        "Vulnerability",
-        "Data breach"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "High",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
-        "Verify whether the impacted service, vendor, or product is used inside your organization.",
-        "Assess the need to rotate passwords, keys, and tokens associated with the affected service."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        },
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/10/hackers-backdoor-nextcloud-servers.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        },
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "273151ad15c0",
-      "date": "2026-10-14",
-      "title": "Microsoft Disrupts 3 Phishing Kits Linked to Over 1 Billion Scam Messages",
-      "url": "https://thehackernews.com/2026/10/microsoft-disrupts-3-phishing-kits.html",
-      "source": "The Hacker News",
-      "summary": "Microsoft and Health-ISAC, along with the Japan Cybercrime Control Center (JC3) and a coalition of private sector companies, such as Resecurity, Cloudflare, Oracle, Proofpoint, and TRM Labs, announ...",
-      "tags": [
-        "Phishing"
-      ],
-      "tech": [
-        "Windows",
-        "Cloud"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        },
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "079d5c79d359",
-      "date": "2026-10-14",
-      "title": "FBI raids DPRK IT worker laptop farms in Texas, US nationals arrested",
-      "url": "https://www.bleepingcomputer.com/news/security/fbi-raids-dprk-it-worker-laptop-farms-in-texas-us-nationals-arrested/",
-      "source": "BleepingComputer",
-      "summary": "The U.S. Department of Justice (DoJ) has disrupted the Famous Chollima threat group's operations by arresting two suspects, charging 14 individuals, and seizing nearly 187 laptops used in North Kor...",
-      "tags": [
-        "Malware"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
-        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline."
-      ],
-      "scripts": [
-        {
-          "name": "PowerShell: hunt for suspicious processes and autoruns",
-          "language": "powershell",
-          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
-        },
-        {
-          "name": "Linux: hunt for suspicious processes and SUID binaries",
-          "language": "bash",
-          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
-        }
-      ]
-    },
-    {
-      "id": "29a8c7dc43f5",
-      "date": "2026-10-14",
-      "title": "Anthropic 'SneakPeek' Flaw Is a Silent Zero-Click Threat",
-      "url": "https://www.darkreading.com/threat-intelligence/new-anthropic-sneakpeek-silent-zero-click-threat",
-      "source": "Dark Reading",
-      "summary": "A bug in Claude Code Desktop's preview pane can allow adversaries to quietly steal credentials from developers, including SSH private keys, AWS credentials, and Claude 0Auth tokens.",
-      "tags": [
-        "Account takeover"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        },
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "f79aa01bca55",
-      "date": "2026-10-14",
-      "title": "Ivanti ICS Zero-Day Attacks Highlight Vendor Patching Hurdles",
-      "url": "https://www.darkreading.com/vulnerabilities-threats/ivanti-ics-zero-day-attacks-vendor-patching",
-      "source": "Dark Reading",
-      "summary": "CVE-2026-104935, a high-severity authentication bypass + RCE vulnerability, was only partially discovered and patched in July, leaving an opening for threat actors to capitalize on.",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "ICS/OT"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation.",
-        "Validate that affected OT components are properly segmented from corporate IT networks.",
-        "Coordinate patching or mitigations with OT engineering teams to avoid impacting safety‑critical processes."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://www.darkreading.com/vulnerabilities-threats/ivanti-ics-zero-day-attacks-vendor-patching\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "5c13d2080496",
-      "date": "2026-10-14",
-      "title": "Yam Store: The Phishing Network Behind a Billion Messages",
-      "url": "https://www.darkreading.com/cyberattacks-data-breaches/yam-store-phishing-network-behind-billion-messages",
-      "source": "Dark Reading",
-      "summary": "A sprawling cybercrime marketplace supplied cloud infrastructure and phishing kits that helped fuel more than 1 billion phishing messages worldwide.",
-      "tags": [
-        "Phishing"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Run targeted awareness for users most likely to be impacted by the described phishing templates.",
-        "Review MFA policies and disable legacy authentication protocols (POP/IMAP/SMTP basic auth and other non‑MFA flows)."
-      ],
-      "scripts": [
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        },
-        {
-          "name": "M365: search for suspicious sign‑ins in unified audit log",
-          "language": "powershell",
-          "body": "# Requires Exchange Online / Security & Compliance modules and permissions to read audit logs\nSearch-UnifiedAuditLog -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date) -Operations UserLoggedIn |\n  Where-Object { $_.ClientIP -notlike \"YOUR_TRUSTED_RANGE*\" } |\n  Select-Object UserId, ClientIP, Operation, CreationDate"
-        }
-      ]
-    },
-    {
-      "id": "6b52b8e8deca",
-      "date": "2026-10-14",
-      "title": "Microsoft fixes VPN issues caused by September Windows updates",
-      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-fixes-vpn-issues-caused-by-september-windows-updates/",
-      "source": "BleepingComputer",
-      "summary": "Microsoft has resolved a known issue that caused Always On VPN connection issues after installing the September 2026 Windows 11 security updates. [...]",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
-        }
-      ]
-    },
-    {
-      "id": "dddfc62950dc",
-      "date": "2026-10-14",
-      "title": "U.S. Shuts Down Over 40 Laptop Farms, Charges 14 in North Korean IT Worker Fraud",
-      "url": "https://thehackernews.com/2026/10/us-shuts-down-over-40-laptop-farms.html",
-      "source": "The Hacker News",
-      "summary": "The U.S. Department of Justice (DoJ) on Tuesday charged 14 people and seized about 187 computers as part of its ongoing efforts to disrupt North Korea's fraudulent remote IT worker (ITW) scheme.\n\nT...",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
