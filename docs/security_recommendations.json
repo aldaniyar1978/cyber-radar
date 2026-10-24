@@ -1,6 +1,100 @@
 {
-  "lastUpdated": "2026-10-23T22:40:33Z",
+  "lastUpdated": "2026-10-24T11:18:27Z",
   "items": [
+    {
+      "id": "01909a978a2b",
+      "date": "2026-10-24",
+      "title": "CISA Flags Two Actively Exploited Critical Flaws in Collabora Online and Arista VeloCloud",
+      "url": "https://thehackernews.com/2026/10/cisa-flags-two-actively-exploited.html",
+      "source": "The Hacker News",
+      "summary": "The U.S. Cybersecurity and Infrastructure Security Agency (CISA) on Friday added two vulnerabilities impacting Collabora Online Built-in CODE Server and Arista VeloCloud Orchestrator (VCO) to its K...",
+      "tags": [
+        "Malware",
+        "Vulnerability"
+      ],
+      "tech": [
+        "Cloud"
+      ],
+      "severity": "Medium",
+      "recommendations": [
+        "Run an out-of-band malware scan on servers and endpoints, focusing on recent changes.",
+        "Collect suspicious binaries from Temp/AppData and submit them to a sandbox or reverse engineering pipeline.",
+        "Map affected product versions from the article to the software actually deployed in your environment.",
+        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
+      ],
+      "scripts": [
+        {
+          "name": "PowerShell: hunt for suspicious processes and autoruns",
+          "language": "powershell",
+          "body": "Get-WmiObject Win32_Process |\n  Where-Object { $_.Path -and ($_.Path -like \"*AppData*\" -or $_.Path -like \"*Temp*\") } |\n  Select-Object ProcessId, Name, Path\n\nGet-CimInstance Win32_StartupCommand |\n  Select-Object Name, Command, Location"
+        },
+        {
+          "name": "Linux: hunt for suspicious processes and SUID binaries",
+          "language": "bash",
+          "body": "ps aux | egrep \"crypto|minerd|xmrig|kdevtmpfsi\" | grep -v egrep || echo \"No obvious miners found\"\n\nfind / -xdev -type f -perm -4000 2>/dev/null"
+        },
+        {
+          "name": "Search for requests related to this article URL in web logs (Linux)",
+          "language": "bash",
+          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/10/cisa-flags-two-actively-exploited.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
+        },
+        {
+          "name": "AWS CLI: basic public S3 bucket exposure check",
+          "language": "bash",
+          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
+        }
+      ]
+    },
+    {
+      "id": "6fc839756582",
+      "date": "2026-10-24",
+      "title": "Researchers Push Over 2 Million Updates to Remotely Disable Popcorn Time Updater That Could Fuel a Botnet",
+      "url": "https://thehackernews.com/2026/10/researchers-push-over-2-million-updates.html",
+      "source": "The Hacker News",
+      "summary": "Between November 2025 and March 2026, the Dutch security firm Eye Security pushed more than 2 million updates to computers it did not own to switch off a background updater that it said could have ...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
+    {
+      "id": "e57b15d464ed",
+      "date": "2026-10-24",
+      "title": "Brotli Decoder Flaw Behind Node.js RCE Also Affects Bun, Python and Other Widely Used Software",
+      "url": "https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html",
+      "source": "The Hacker News",
+      "summary": "A memory-corruption flaw in Google's Brotli decoder sits in many programs that unpack Brotli-compressed data, among them Bun, the Python&nbsp;Brotli&nbsp;and&nbsp;brotlicffi&nbsp;packages, and Envo...",
+      "tags": [
+        "Cybersecurity"
+      ],
+      "tech": [
+        "Generic"
+      ],
+      "severity": "Low",
+      "recommendations": [
+        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
+      ],
+      "scripts": [
+        {
+          "name": "Generic: search for IOCs from the article across logs",
+          "language": "bash",
+          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
+        }
+      ]
+    },
     {
       "id": "88f9184e4a8e",
       "date": "2026-10-23",
@@ -6051,88 +6145,6 @@
           "name": "Search for requests related to this article URL in web logs (Linux)",
           "language": "bash",
           "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/10/langflows-critical-authenticated-rce.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "47a815dfb469",
-      "date": "2026-10-15",
-      "title": "AhsayCBS Flaws Exploited to Deploy Web Shells Get New Fixes After Incomplete Patches",
-      "url": "https://thehackernews.com/2026/10/ahsaycbs-flaws-exploited-to-deploy-web.html",
-      "source": "The Hacker News",
-      "summary": "Singapore-based Ahsay Backup has released security updates to address two security flaws in AhsayCBS that have been exploited by bad actors to drop web shells and XMRig cryptocurrency miners.\n\nThe ...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Cloud"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/10/ahsaycbs-flaws-exploited-to-deploy-web.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        },
-        {
-          "name": "AWS CLI: basic public S3 bucket exposure check",
-          "language": "bash",
-          "body": "# Requires configured AWS CLI with permissions to list and read S3 ACLs\naws s3api list-buckets --query \"Buckets[].Name\" --output text | tr '\\t' '\\n' | while read B; do\n  echo \"Bucket: $B\"\n  aws s3api get-bucket-acl --bucket \"$B\" --query \"Grants[].Grantee.URI\" --output text 2>/dev/null |\n    egrep \"AllUsers|AuthenticatedUsers\" && echo \"  [!] Bucket may be publicly accessible\"\ndone"
-        }
-      ]
-    },
-    {
-      "id": "d6e8bf80af24",
-      "date": "2026-10-15",
-      "title": "Palo Alto Networks Patches PAN-OS Authenticated RCE Flaw Amid Active Exploitation",
-      "url": "https://thehackernews.com/2026/10/palo-alto-networks-patches-pan-os.html",
-      "source": "The Hacker News",
-      "summary": "Palo Alto Networks on Wednesday issued security updates for a high-severity flaw in PAN-OS software that has come under active exploitation.\n\nThe vulnerability, tracked as CVE-2026-0322 (CVSS score...",
-      "tags": [
-        "Vulnerability"
-      ],
-      "tech": [
-        "Generic"
-      ],
-      "severity": "Medium",
-      "recommendations": [
-        "Map affected product versions from the article to the software actually deployed in your environment.",
-        "If no vendor patch is available, implement temporary mitigations such as WAF rules, strict access control, and additional segmentation."
-      ],
-      "scripts": [
-        {
-          "name": "Search for requests related to this article URL in web logs (Linux)",
-          "language": "bash",
-          "body": "# Replace access.log paths with your actual web server logs\ngrep -i \"https://thehackernews.com/2026/10/palo-alto-networks-patches-pan-os.html\" /var/log/nginx/access.log* /var/log/apache2/access.log* 2>/dev/null || echo \"No hits for indicator\""
-        }
-      ]
-    },
-    {
-      "id": "c0717ce9f768",
-      "date": "2026-10-15",
-      "title": "Microsoft fixes bug causing Windows black screens, Explorer crashes",
-      "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-fixes-bug-causing-windows-black-screens-explorer-crashes/",
-      "source": "BleepingComputer",
-      "summary": "Microsoft has resolved a known issue that was causing black screens, desktop loading issues, and Explorer crashes after installing Windows 11 updates released since August. [...]",
-      "tags": [
-        "Cybersecurity"
-      ],
-      "tech": [
-        "Windows"
-      ],
-      "severity": "Low",
-      "recommendations": [
-        "Assess the relevance of this story to your environment and map the described techniques to your technology stack."
-      ],
-      "scripts": [
-        {
-          "name": "Generic: search for IOCs from the article across logs",
-          "language": "bash",
-          "body": "# Replace PATTERN with domains/IPs/URLs or other indicators extracted from the article:\ngrep -Ei \"PATTERN\" /var/log/* 2>/dev/null || echo \"No hits for pattern\""
         }
       ]
     }
